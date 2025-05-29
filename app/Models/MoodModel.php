@@ -13,6 +13,6 @@ class MoodModel extends Model
 
     public function recommendations()
     {
-        return $this->hasMany(RecommendationModel::class);
+        return $this->hasMany(RecommendationModel::class, 'mood_id');
     }
 }

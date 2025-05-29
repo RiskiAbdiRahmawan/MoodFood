@@ -308,6 +308,14 @@
         <script src="./js/meal-planner.js"></script>
         <script src="./js/feedback.js"></script>
         <script>
+            // Session configuration
+            window.MOOD_FOOD_CONFIG = {
+                sessionId: {{ $sessionId ?? 'null' }},
+                csrfToken: '{{ csrf_token() }}',
+                baseUrl: '{{ url('/') }}',
+                trackingEnabled: true
+            };
+
             // Initialize the application when DOM is loaded
             document.addEventListener('DOMContentLoaded', function() {
                 window.moodFoodApp = new MoodFoodApp();

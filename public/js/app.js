@@ -8,6 +8,12 @@ class MoodFoodApp {
         this.moodData = {};
         this.recipesData = {};
         
+        // Session tracking
+        this.sessionId = window.MOOD_FOOD_CONFIG?.sessionId || null;
+        this.trackingEnabled = window.MOOD_FOOD_CONFIG?.trackingEnabled || false;
+        this.csrfToken = window.MOOD_FOOD_CONFIG?.csrfToken || '';
+        this.baseUrl = window.MOOD_FOOD_CONFIG?.baseUrl || '';
+        
         this.init();
     }
 
@@ -46,9 +52,15 @@ class MoodFoodApp {
                     window.chatbot = new MoodFoodChatbot();
                 }
             }, 100);
-            
-            // Show welcome message
+              // Show welcome message
             this.showNotification('Selamat datang di MoodFood Pro! 🌟');
+            
+            // Show session status if tracking is enabled
+            if (this.trackingEnabled && this.sessionId) {
+                setTimeout(() => {
+                    this.showSessionStatus();
+                }, 1000);
+            }
         } catch (error) {
             console.error('Failed to initialize app:', error);
             this.showNotification('Terjadi kesalahan saat memuat aplikasi', 'error');
@@ -213,9 +225,7 @@ class MoodFoodApp {
         
         // Trigger an event that section has changed
         window.dispatchEvent(new CustomEvent('sectionChanged', { detail: { section: sectionId } }));
-    }
-
-    selectMood(mood) {
+    }    selectMood(mood) {
         this.currentMood = mood;
         
         // Update UI
@@ -226,11 +236,35 @@ class MoodFoodApp {
         // Show recommendations
         this.showRecommendations(mood);
         
-        // Save mood entry
+        // Save mood entry locally
         this.saveMoodEntry(mood, this.moodIntensity);
+        
+        // Track mood selection on server if available
+        if (this.trackingEnabled && this.sessionId) {
+            this.trackMoodSelection(mood, this.moodIntensity);
+        }
         
         // Dispatch event for chatbot
         this.dispatchMoodChange(mood);
+    }
+
+    async trackMoodSelection(mood, intensity) {
+        try {
+            // Note: This will be handled by the controller automatically when mood is selected
+            // via the mood-food route with parameters, but we can also track it via API
+            const response = await fetch(`${this.baseUrl}/mood-food?mood=${mood}&intensity=${intensity}`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': this.csrfToken
+                }
+            });
+            
+            if (response.ok) {
+                console.log('Mood selection tracked successfully');
+            }
+        } catch (error) {
+            console.warn('Error tracking mood selection:', error);
+        }
     }
 
     togglePreference(preference) {
@@ -288,12 +322,11 @@ class MoodFoodApp {
                 processedFoodsContainer.appendChild(foodCard);
             });
         }
-    }
-
-    createFoodCard(food, type) {
+    }    createFoodCard(food, type) {
         const foodCard = document.createElement('div');
         foodCard.className = 'food-card';
         foodCard.dataset.type = type;
+        foodCard.dataset.foodName = food.name;
         
         const typeLabel = type === 'natural' ? 'Alami' : 'Olahan';
         
@@ -328,9 +361,118 @@ class MoodFoodApp {
                     <strong>Vitamin:</strong> ${food.vitamins.join(', ')}
                 </div>` : ''}
             </div>
+            <div class="food-actions">
+                <button class="btn btn-primary add-to-plan-btn" data-food="${food.name}">
+                    <i class="fas fa-plus"></i> Tambah ke Meal Plan
+                </button>
+                <button class="btn btn-secondary view-nutrition-btn" data-food="${food.name}">
+                    <i class="fas fa-info-circle"></i> Detail Nutrisi
+                </button>
+            </div>
         `;
-        
+
+        // Add click tracking for the food card
+        foodCard.addEventListener('click', (e) => {
+            if (!e.target.closest('.btn')) {
+                this.trackFoodInteraction(food.name, 'view', {
+                    type: type,
+                    mood: this.currentMood,
+                    calories: food.calories
+                });
+            }
+        });
+
+        // Add event listeners for buttons
+        const addToPlanBtn = foodCard.querySelector('.add-to-plan-btn');
+        const viewNutritionBtn = foodCard.querySelector('.view-nutrition-btn');
+
+        if (addToPlanBtn) {
+            addToPlanBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.addToMealPlan(food.name);
+                this.trackFoodInteraction(food.name, 'add_to_plan', {
+                    type: type,
+                    mood: this.currentMood
+                });
+            });
+        }
+
+        if (viewNutritionBtn) {
+            viewNutritionBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.showNutritionDetails(food);
+                this.trackFoodInteraction(food.name, 'click', {
+                    type: type,
+                    action: 'view_nutrition',
+                    mood: this.currentMood
+                });
+            });
+        }
+
         return foodCard;
+    }
+
+    showNutritionDetails(food) {
+        const modal = document.createElement('div');
+        modal.className = 'nutrition-modal';
+        modal.innerHTML = `
+            <div class="nutrition-modal-content">
+                <div class="nutrition-modal-header">
+                    <h3><i class="fas fa-apple-alt"></i> ${food.name}</h3>
+                    <button class="nutrition-modal-close">&times;</button>
+                </div>
+                <div class="nutrition-modal-body">
+                    <div class="nutrition-detail-grid">
+                        <div class="nutrition-detail-item">
+                            <span class="label">Kalori</span>
+                            <span class="value">${food.calories} kcal</span>
+                        </div>
+                        ${food.protein ? `
+                        <div class="nutrition-detail-item">
+                            <span class="label">Protein</span>
+                            <span class="value">${food.protein}g</span>
+                        </div>` : ''}
+                        ${food.carbs ? `
+                        <div class="nutrition-detail-item">
+                            <span class="label">Karbohidrat</span>
+                            <span class="value">${food.carbs}g</span>
+                        </div>` : ''}
+                        ${food.fats ? `
+                        <div class="nutrition-detail-item">
+                            <span class="label">Lemak</span>
+                            <span class="value">${food.fats}g</span>
+                        </div>` : ''}
+                        ${food.vitamins ? `
+                        <div class="nutrition-detail-item vitamins">
+                            <span class="label">Vitamin</span>
+                            <span class="value">${food.vitamins.join(', ')}</span>
+                        </div>` : ''}
+                    </div>
+                    <div class="nutrition-benefits">
+                        <h4>Manfaat untuk Mood:</h4>
+                        <p>${food.benefits}</p>
+                    </div>
+                    <div class="nutrition-actions">
+                        <button class="btn btn-primary" onclick="window.moodFoodApp.addToMealPlan('${food.name}'); this.closest('.nutrition-modal').remove();">
+                            <i class="fas fa-plus"></i> Tambah ke Meal Plan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Add close functionality
+        modal.querySelector('.nutrition-modal-close').addEventListener('click', () => {
+            modal.remove();
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
     }
 
     saveMoodEntry(mood, intensity) {
@@ -420,9 +562,7 @@ class MoodFoodApp {
                 star.classList.remove('active');
             }
         });
-    }
-
-    submitFeedback() {
+    }    submitFeedback() {
         const feedbackText = document.getElementById('feedback-text')?.value || '';
         
         if (this.selectedRating === 0) {
@@ -433,23 +573,32 @@ class MoodFoodApp {
         const feedback = {
             rating: this.selectedRating,
             text: feedbackText,
+            content: feedbackText,
             timestamp: new Date().toISOString(),
             mood: this.currentMood,
-            intensity: this.moodIntensity
+            intensity: this.moodIntensity,
+            type: 'general',
+            scope: 'overall_experience'
         };
 
-        let feedbackHistory = JSON.parse(localStorage.getItem('feedbackHistory') || '[]');
-        feedbackHistory.push(feedback);
-        localStorage.setItem('feedbackHistory', JSON.stringify(feedbackHistory));
-
-        this.showNotification(`Terima kasih atas feedback Anda! Rating: ${this.selectedRating} ⭐`);
+        // Try to submit to server first
+        if (this.trackingEnabled && this.sessionId) {
+            this.submitFeedbackToServer(feedback);
+        } else {
+            // Fallback to local storage
+            let feedbackHistory = JSON.parse(localStorage.getItem('feedbackHistory') || '[]');
+            feedbackHistory.push(feedback);
+            localStorage.setItem('feedbackHistory', JSON.stringify(feedbackHistory));
+            
+            this.showNotification(`Terima kasih atas feedback Anda! Rating: ${this.selectedRating} ⭐`);
+        }
 
         // Reset form
         this.selectedRating = 0;
         this.updateStars();
         const feedbackTextArea = document.getElementById('feedback-text');
         if (feedbackTextArea) feedbackTextArea.value = '';
-    }    generateSmartRecipes() {
+    }generateSmartRecipes() {
         if (!this.currentMood) {
             this.showNotification('Pilih mood Anda terlebih dahulu untuk rekomendasi resep', 'warning');
             return;
@@ -671,12 +820,69 @@ class MoodFoodApp {
         }, 10);
         
         this.showNotification(`Menampilkan detail resep: ${recipeName}`);
-    }
-
-    updateCharts() {
-        // This will be implemented in charts.js
+    }    async updateCharts() {
+        // Try to load analytics data from server
+        const serverAnalytics = await this.loadAnalyticsData();
+        
+        if (serverAnalytics) {
+            // Use server data if available
+            this.updateChartsWithServerData(serverAnalytics);
+        } else {
+            // Fallback to local data
+            this.updateChartsWithLocalData();
+        }
+        
+        // Update charts manager if available
         if (window.ChartsManager) {
             window.ChartsManager.updateAllCharts();
+        }
+    }
+
+    updateChartsWithServerData(data) {
+        // Update stats with server data
+        const totalMealsElement = document.getElementById('total-meals');
+        const moodScoreElement = document.getElementById('mood-score');
+        const goalsElement = document.getElementById('goals-achieved');
+
+        if (totalMealsElement && data.total_mood_selections) {
+            totalMealsElement.textContent = data.total_mood_selections;
+        }
+
+        if (moodScoreElement && data.popular_moods && data.popular_moods.length > 0) {
+            // Calculate average mood score from popular moods
+            const avgScore = data.popular_moods.reduce((sum, mood) => sum + (mood.count * 5), 0) / 
+                           data.popular_moods.reduce((sum, mood) => sum + mood.count, 0);
+            moodScoreElement.textContent = avgScore.toFixed(1);
+        }
+
+        if (goalsElement && data.total_sessions) {
+            goalsElement.textContent = Math.min(data.total_sessions, 10);
+        }
+
+        // Store server data for charts
+        window.serverAnalyticsData = data;
+    }
+
+    updateChartsWithLocalData() {
+        // Use existing local data update logic
+        const moodHistory = JSON.parse(localStorage.getItem('moodHistory') || '[]');
+        
+        const totalMealsElement = document.getElementById('total-meals');
+        const moodScoreElement = document.getElementById('mood-score');
+        const goalsElement = document.getElementById('goals-achieved');
+
+        if (totalMealsElement) {
+            totalMealsElement.textContent = moodHistory.length;
+        }
+
+        if (moodScoreElement) {
+            const average = this.calculateMoodAverage(moodHistory);
+            moodScoreElement.textContent = average.toFixed(1);
+        }
+
+        if (goalsElement) {
+            const goals = Math.min(moodHistory.length, 10);
+            goalsElement.textContent = goals;
         }
     }
 
@@ -904,14 +1110,133 @@ class MoodFoodApp {
         if (feedbackHistory.length === 0) return 0;
         const total = feedbackHistory.reduce((sum, feedback) => sum + feedback.rating, 0);
         return total / feedbackHistory.length;
-    }
-
-    // Method to trigger mood change event for chatbot
+    }    // Method to trigger mood change event for chatbot
     dispatchMoodChange(mood) {
         const moodChangeEvent = new CustomEvent('moodChanged', {
             detail: { mood: mood }
         });
         document.dispatchEvent(moodChangeEvent);
+    }
+
+    // Session tracking methods
+    async trackFoodInteraction(foodName, interactionType, metadata = {}) {
+        if (!this.trackingEnabled || !this.sessionId) return;
+
+        try {
+            const response = await fetch(`${this.baseUrl}/api/track-food-interaction`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': this.csrfToken
+                },
+                body: JSON.stringify({
+                    session_id: this.sessionId,
+                    food_name: foodName,
+                    interaction_type: interactionType,
+                    metadata: metadata
+                })
+            });
+
+            if (!response.ok) {
+                console.warn('Failed to track food interaction:', response.statusText);
+            }
+        } catch (error) {
+            console.warn('Error tracking food interaction:', error);
+        }
+    }
+
+    async submitFeedbackToServer(feedbackData) {
+        if (!this.trackingEnabled || !this.sessionId) {
+            // Fallback to local storage
+            this.submitFeedback();
+            return;
+        }
+
+        try {
+            const response = await fetch(`${this.baseUrl}/api/submit-feedback`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': this.csrfToken
+                },
+                body: JSON.stringify({
+                    session_id: this.sessionId,
+                    type: feedbackData.type || 'general',
+                    rating: feedbackData.rating,
+                    content: feedbackData.content || feedbackData.text || '',
+                    scope: feedbackData.scope || 'overall_experience'
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                this.showNotification(result.message || 'Terima kasih atas feedback Anda!');
+            } else {
+                throw new Error('Failed to submit feedback');
+            }
+        } catch (error) {
+            console.warn('Error submitting feedback to server:', error);
+            // Fallback to local storage
+            this.submitFeedback();
+        }
+    }
+
+    async loadAnalyticsData() {
+        if (!this.trackingEnabled) return null;
+
+        try {
+            const response = await fetch(`${this.baseUrl}/api/analytics`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': this.csrfToken
+                }
+            });
+
+            if (response.ok) {
+                return await response.json();
+            }
+        } catch (error) {
+            console.warn('Error loading analytics data:', error);
+        }
+        return null;
+    }
+
+    // Enhanced session notification system
+    showSessionStatus() {
+        if (this.sessionId) {
+            const indicator = document.createElement('div');
+            indicator.className = 'session-indicator';
+            indicator.innerHTML = `
+                <i class="fas fa-shield-alt"></i>
+                <span>Session Active</span>
+            `;
+            indicator.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(34, 197, 94, 0.9);
+                color: white;
+                padding: 8px 12px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                z-index: 1000;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            `;
+            
+            document.body.appendChild(indicator);
+            
+            setTimeout(() => {
+                indicator.style.opacity = '1';
+            }, 100);
+            
+            setTimeout(() => {
+                indicator.style.opacity = '0';
+                setTimeout(() => {
+                    indicator.remove();
+                }, 300);
+            }, 3000);
+        }
     }
 }
 
