@@ -15,8 +15,6 @@
             <div class="text-center">
                 <h1 class="text-6xl font-bold text-white mb-4">Mood Kamu, Menu Kamu</h1>
                 <p class="text-2xl text-white mb-6">Simpel dan catchy. Menekankan personalisasi saran makanan.</p>
-                <button class="bg-transparent border-3 border-white text-white px-6 py-2 rounded-full hover:bg-green-800 hover:text-white 
-         transition duration-300 ease-in-out transform hover:scale-105">Keep With MoodFood</button>
                 <a href="{{ url('/mood-food') }}" class="inline-block bg-transparent border-3 border-white text-white px-6 py-2 rounded-full hover:bg-green-800 hover:text-white">Coba MoodFood Pro</a>
             </div>
         </div>
