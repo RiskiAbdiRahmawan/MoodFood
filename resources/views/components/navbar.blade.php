@@ -9,11 +9,11 @@
 
             <!-- Menu Desktop -->
             <div class="hidden md:flex space-x-6">
-                <a href="/" class="text-gray-600 hover:text-green-600">Home</a>
-                <a href="#about" class="text-gray-600 hover:text-green-600">About</a>
-                <a href="#rekomendasi" class="text-gray-600 hover:text-green-600">Mood</a>
-                <a href="#edukasi" class="text-gray-600 hover:text-green-600">Education</a>
-                <a href="#feedback" class="text-gray-600 hover:text-green-600">Feedback</a>
+                <a href="{{ url('/') }}" class="text-gray-600 hover:text-green-600">Home</a>
+                <a href="{{ url('/#about') }}" class="text-gray-600 hover:text-green-600">About</a>
+                <a href="{{ url('/#rekomendasi') }}" class="text-gray-600 hover:text-green-600">Mood</a>
+                <a href="{{ url('/#edukasi') }}" class="text-gray-600 hover:text-green-600">Education</a>
+                <a href="{{ url('/#feedback') }}" class="text-gray-600 hover:text-green-600">Feedback</a>
             </div>
 
             <!-- Gambar Logo Kanan -->
@@ -36,11 +36,11 @@
 
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
-            <a href="/" class="block text-gray-600 hover:text-green-600">Home</a>
-            <a href="#about" class="block text-gray-600 hover:text-green-600">About</a>
-            <a href="#rekomendasi" class="block text-gray-600 hover:text-green-600">Mood</a>
-            <a href="#edukasi" class="block text-gray-600 hover:text-green-600">Education</a>
-            <a href="#feedback" class="block text-gray-600 hover:text-green-600">Feedback</a>
+            <a href="{{ url('/') }}" class="block text-gray-600 hover:text-green-600">Home</a>
+            <a href="{{ url('/#about') }}" class="block text-gray-600 hover:text-green-600">About</a>
+            <a href="{{ url('/#rekomendasi') }}" class="block text-gray-600 hover:text-green-600">Mood</a>
+            <a href="{{ url('/edukasi') }}" class="block text-gray-600 hover:text-green-600">Education</a>
+            <a href="{{ url('/#feedback') }}" class="block text-gray-600 hover:text-green-600">Feedback</a>
             <!-- Logo di Mobile -->
             <div class="pt-2">
                 <a href="/">
