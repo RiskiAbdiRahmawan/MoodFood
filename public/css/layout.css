@@ -8,21 +8,23 @@
 
 /* Navigation Styles */
 .navigation {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     border-radius: var(--border-radius);
     padding: 15px 30px;
     margin-bottom: 30px;
     display: flex;
     justify-content: center;
-    gap: 20px;
+    align-items: center;
+    gap: 15px;
     flex-wrap: wrap;
+    flex-direction: column;
 }
 
 .nav-btn {
     background: transparent;
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #4b5563;
+    border: 2px solid #e5e7eb;
     padding: 10px 20px;
     border-radius: var(--border-radius);
     cursor: pointer;
@@ -31,13 +33,56 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    text-decoration: none;
+}
+
+/* Add a separator between back button and other navigation items */
+.navigation::after {
+    display: none;
+}
+
+/* Create a row for the section buttons */
+.navigation div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
 }
 
 .nav-btn:hover,
 .nav-btn.active {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.6);
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
     transform: translateY(-2px);
+}
+
+/* Back button style */
+.nav-btn.back-btn {
+    background-color: white;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.nav-btn.back-btn::after {
+    content: '';
+    display: block;
+    height: 2px;
+    width: 60px;
+    background-color: #e5e7eb;
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-btn.back-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
 }
 
 /* Section Management */
@@ -51,17 +96,16 @@
 
 /* Card Styles */
 .card {
-    background: rgba(255, 255, 255, 0.95);
+    background: white;
     border-radius: 20px;
     padding: 30px;
     margin-bottom: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border: 1px solid #f0f0f0;
     transition: var(--transition);
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
 }

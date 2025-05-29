@@ -52,21 +52,29 @@
 
             <!-- Navigation -->
             <div class="navigation">
-                <button class="nav-btn active" data-section="mood-tracker">
-                    <i class="fas fa-smile"></i> Mood Tracker
-                </button>
-                <button class="nav-btn" data-section="meal-planner">
-                    <i class="fas fa-calendar-alt"></i> Meal Planner
-                </button>
-                <button class="nav-btn" data-section="recipes">
-                    <i class="fas fa-book"></i> Smart Recipes
-                </button>
-                <button class="nav-btn" data-section="analytics">
-                    <i class="fas fa-chart-line"></i> Analytics
-                </button>
-                <button class="nav-btn" data-section="goals">
-                    <i class="fas fa-target"></i> Goals
-                </button>
+                <!-- Home Button -->
+                <a href="{{ url('/') }}" class="nav-btn back-btn">
+                    <i class="fas fa-home"></i> Kembali ke Beranda
+                </a>
+                
+                <!-- Section Navigation -->
+                <div>
+                    <button class="nav-btn active" data-section="mood-tracker">
+                        <i class="fas fa-smile"></i> Mood Tracker
+                    </button>
+                    <button class="nav-btn" data-section="meal-planner">
+                        <i class="fas fa-calendar-alt"></i> Meal Planner
+                    </button>
+                    <button class="nav-btn" data-section="recipes">
+                        <i class="fas fa-book"></i> Smart Recipes
+                    </button>
+                    <button class="nav-btn" data-section="analytics">
+                        <i class="fas fa-chart-line"></i> Analytics
+                    </button>
+                    <button class="nav-btn" data-section="goals">
+                        <i class="fas fa-target"></i> Goals
+                    </button>
+                </div>
             </div>
 
             <!-- Mood Tracker Section -->

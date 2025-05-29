@@ -12,6 +12,12 @@
         grid-template-columns: 1fr;
         gap: 20px;
     }
+    
+    /* Navigation responsive styles */
+    .navigation {
+        gap: 12px;
+        padding: 15px 20px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -25,6 +31,23 @@
     
     .header h1 {
         font-size: 1.5em;
+    }
+    
+    /* Mobile navigation */
+    .navigation {
+        flex-direction: column;
+        padding: 15px;
+        gap: 10px;
+    }
+    
+    .nav-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 15px;
+    }
+    
+    .nav-btn.back-btn {
+        margin-bottom: 5px;
     }
     
     .stats-grid {

@@ -1,12 +1,12 @@
 /* CSS Custom Properties & Variables */
 :root {
-    --primary-color: #667eea;
-    --secondary-color: #764ba2;
-    --accent-color: #48bb78;
+    --primary-color: #22c55e; /* Green color from landing page */
+    --secondary-color: #15803d; /* Darker green for contrast */
+    --accent-color: #4ade80; /* Lighter green as accent */
     --danger-color: #f56565;
     --warning-color: #ed8936;
     --info-color: #4299e1;
-    --dark-color: #2d3748;
+    --dark-color: #1f2937;
     --light-color: #f7fafc;
     --border-radius: 12px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -14,7 +14,7 @@
     /* Meal Planner Specific Colors */
     --meal-planner-primary: var(--primary-color);
     --meal-planner-secondary: var(--secondary-color);
-    --meal-planner-accent: #f093fb;
+    --meal-planner-accent: var(--accent-color);
     --meal-planner-success: #10b981;
     --meal-planner-warning: #f59e0b;
     --meal-planner-error: #ef4444;
@@ -30,8 +30,8 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background-color: #f7fafc; /* Light background like landing page */
     min-height: 100vh;
-    color: #333;
+    color: #1f2937; /* Darker text color for better readability */
     overflow-x: hidden;
 }

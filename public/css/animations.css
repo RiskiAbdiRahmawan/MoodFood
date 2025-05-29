@@ -11,7 +11,7 @@
 
 .shape {
     position: absolute;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(34, 197, 94, 0.05); /* Subtle green color */
     border-radius: 50%;
     animation: float 6s ease-in-out infinite;
 }

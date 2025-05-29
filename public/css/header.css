@@ -1,7 +1,7 @@
 /* Header Styles */
 .header {
     text-align: center;
-    color: white;
+    color: #1f2937;
     margin-bottom: 30px;
     position: relative;
 }
@@ -9,16 +9,13 @@
 .header h1 {
     font-size: 3.5rem;
     margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    background: linear-gradient(45deg, #fff, #e2e8f0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    color: var(--primary-color);
 }
 
 .header p {
     font-size: 1.3rem;
-    opacity: 0.9;
+    color: #4b5563;
     margin-bottom: 20px;
 }
 
@@ -31,10 +28,10 @@
 }
 
 .stat-item {
-    background: rgba(255, 255, 255, 0.1);
+    background: white;
     padding: 15px 25px;
     border-radius: var(--border-radius);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     text-align: center;
 }
 
@@ -42,9 +39,10 @@
     font-size: 2rem;
     font-weight: bold;
     display: block;
+    color: var(--primary-color);
 }
 
 .stat-label {
     font-size: 0.9rem;
-    opacity: 0.8;
+    color: #6b7280;
 }
