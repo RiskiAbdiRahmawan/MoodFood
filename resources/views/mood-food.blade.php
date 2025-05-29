@@ -100,12 +100,11 @@
                     <div class="dietary-preferences">
                         <h3>Preferensi Diet</h3>
                         <div class="preference-tags">
-                            <button class="preference-tag" data-pref="vegetarian">🥬 Vegetarian</button>
-                            <button class="preference-tag" data-pref="vegan">🌱 Vegan</button>
-                            <button class="preference-tag" data-pref="gluten-free">🌾 Gluten Free</button>
-                            <button class="preference-tag" data-pref="keto">🥑 Keto</button>
-                            <button class="preference-tag" data-pref="low-carb">🥩 Low Carb</button>
-                            <button class="preference-tag" data-pref="dairy-free">🥛 Dairy Free</button>
+                            @foreach ($dietaryPreferences as $pref)
+                                <button class="preference-tag" data-pref="{{ $pref->name }}">
+                                    {{ $pref->emoji_icon ?? '' }} {{ ucfirst($pref->name) }}
+                                </button>
+                            @endforeach
                         </div>
                     </div>
 

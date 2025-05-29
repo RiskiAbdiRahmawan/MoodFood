@@ -12,5 +12,5 @@ Route::get('/edukasi', function () {
 
 // Main website routes
 Route::get('/', [MoodFoodController::class, 'index']);
-Route::get('/mood-food', [MoodFoodController::class, 'showMoodFoodPage']);
+Route::get('/mood-food', [MoodFoodController::class, 'getDietaryPreferences']);
 
