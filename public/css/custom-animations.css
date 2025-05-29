@@ -1,0 +1,175 @@
+/* Custom animations and styles for MoodFood App */
+
+/* Recipe card animations */
+.recipe-card {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.recipe-card.animated {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Recipe modal animations */
+.recipe-modal {
+    animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(5px);
+    }
+}
+
+.recipe-modal.fadeOut {
+    animation: modalFadeOut 0.3s ease-in forwards;
+}
+
+@keyframes modalFadeOut {
+    from {
+        opacity: 1;
+        backdrop-filter: blur(5px);
+    }
+    to {
+        opacity: 0;
+        backdrop-filter: blur(0);
+    }
+}
+
+.recipe-modal-content {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+}
+
+.recipe-modal-content.animated {
+    animation: modalContentSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes modalContentSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Enhance recipe ingredients and steps */
+.recipe-ingredients-list li {
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.recipe-ingredients-list li:hover {
+    background-color: rgba(102, 126, 234, 0.1);
+    transform: translateX(5px);
+}
+
+.recipe-steps li {
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    padding: 10px 15px 10px 50px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.recipe-steps li:hover {
+    background-color: rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Meal planner slot highlight */
+.meal-slot.highlight-added {
+    animation: highlightAdded 2s ease-in-out;
+    z-index: 10;
+}
+
+@keyframes highlightAdded {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+        transform: scale(1);
+    }
+    20% {
+        box-shadow: 0 0 0 10px rgba(102, 126, 234, 0.3);
+        transform: scale(1.05);
+    }
+    40% {
+        box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.1);
+        transform: scale(1.02);
+    }
+    60% {
+        box-shadow: 0 0 0 8px rgba(102, 126, 234, 0.2);
+        transform: scale(1.03);
+    }
+    80% {
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: scale(1.01);
+    }
+}
+
+/* Button styles for recipe actions */
+.btn {
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color, #667eea), var(--secondary-color, #764ba2));
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--primary-color, #667eea);
+    border: 1px solid var(--primary-color, #667eea);
+}
+
+.btn-secondary:hover {
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Recipe info message */
+.recipe-info-message {
+    background: rgba(102, 126, 234, 0.1);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--primary-color, #667eea);
+}
+
+.recipe-info-message p {
+    margin: 0;
+    color: #4a5568;
+}

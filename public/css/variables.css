@@ -1,0 +1,37 @@
+/* CSS Custom Properties & Variables */
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --accent-color: #48bb78;
+    --danger-color: #f56565;
+    --warning-color: #ed8936;
+    --info-color: #4299e1;
+    --dark-color: #2d3748;
+    --light-color: #f7fafc;
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Meal Planner Specific Colors */
+    --meal-planner-primary: var(--primary-color);
+    --meal-planner-secondary: var(--secondary-color);
+    --meal-planner-accent: #f093fb;
+    --meal-planner-success: #10b981;
+    --meal-planner-warning: #f59e0b;
+    --meal-planner-error: #ef4444;
+    --meal-planner-neutral: #6b7280;
+}
+
+/* Reset Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    min-height: 100vh;
+    color: #333;
+    overflow-x: hidden;
+}

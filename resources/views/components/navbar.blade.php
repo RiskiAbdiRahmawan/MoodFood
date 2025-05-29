@@ -46,6 +46,8 @@
                 <a href="/">
                     <img src="{{ asset('assets/image/logo.png') }}" alt="Logo MoodFood" class="h-10 w-auto mx-auto">
                 </a>
+            <div class="flex items-center space-x-4">
+                <a href="{{ url('/mood-food') }}" class="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600">Try MoodFood Pro</a>
             </div>
         </div>
     </nav>
