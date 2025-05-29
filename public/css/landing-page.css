@@ -1,0 +1,198 @@
+/* Landing Page Specific Styles */
+
+/* Gradient Backgrounds */
+.bg-gradient-hero {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.9) 0%, rgba(16, 185, 129, 0.9) 50%, rgba(5, 150, 105, 0.9) 100%);
+}
+
+/* Text Gradient Effects */
+.text-gradient {
+    background: linear-gradient(135deg, #059669, #10b981, #22c55e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Card Hover Effects */
+.card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Animation Classes */
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-blob {
+    animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+
+/* Keyframe Animations */
+@keyframes float {
+    0%, 100% { 
+        transform: translateY(0px); 
+    }
+    50% { 
+        transform: translateY(-20px); 
+    }
+}
+
+@keyframes blob {
+    0% { 
+        transform: translate(0px, 0px) scale(1); 
+    }
+    33% { 
+        transform: translate(30px, -50px) scale(1.1); 
+    }
+    66% { 
+        transform: translate(-20px, 20px) scale(0.9); 
+    }
+    100% { 
+        transform: translate(0px, 0px) scale(1); 
+    }
+}
+
+/* Text Effects */
+.hero-text {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Glass Morphism Effect */
+.glassmorphism {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Pattern Effects */
+.pattern-dots {
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.3) 1px, transparent 0);
+    background-size: 20px 20px;
+}
+
+/* Smooth Scroll Behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #059669, #10b981);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #047857, #059669);
+}
+
+/* Loading State */
+body.loaded {
+    opacity: 1;
+}
+
+/* Responsive Design Enhancements */
+@media (max-width: 768px) {
+    .hero-text {
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    .card-hover:hover {
+        transform: translateY(-4px) scale(1.01);
+    }
+}
+
+/* Focus States for Accessibility */
+.focus-ring:focus {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+}
+
+/* Button Enhancements */
+.btn-gradient {
+    background: linear-gradient(135deg, #059669, #10b981, #22c55e);
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(135deg, #047857, #059669, #16a34a);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Enhancements */
+.form-input {
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+}
+
+/* Section Spacing */
+.section-padding {
+    padding: 5rem 0;
+}
+
+@media (min-width: 1024px) {
+    .section-padding {
+        padding: 8rem 0;
+    }
+}
+
+/* Background Patterns */
+.bg-pattern-dots {
+    background-image: radial-gradient(circle at 1px 1px, rgba(34, 197, 94, 0.3) 1px, transparent 0);
+    background-size: 30px 30px;
+}
+
+.bg-pattern-grid {
+    background-image: linear-gradient(rgba(34, 197, 94, 0.1) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(34, 197, 94, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Utility Classes */
+.backdrop-blur-custom {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.shadow-custom {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.border-gradient {
+    border: 1px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #059669, #10b981) border-box;
+}
