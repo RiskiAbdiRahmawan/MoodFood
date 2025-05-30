@@ -19,14 +19,30 @@ class MoodFoodApp {
 
     async init() {
         try {
-            // Load data files
-            await this.loadData();
+            // Load database data from configuration if available
+            this.loadDatabaseData();
+            
+            // Fallback to files if database data not available
+            if (!this.moodData || Object.keys(this.moodData).length === 0) {
+                await this.loadData();
+            }
             
             // Initialize components
             this.initializeEventListeners();
             this.createBackgroundShapes();
             this.loadUserData();
             this.updateStats();
+
+            // Set initial mood if provided from database
+            if (window.MOOD_FOOD_CONFIG?.selectedMood) {
+                this.currentMood = window.MOOD_FOOD_CONFIG.selectedMood;
+                this.updateMoodDisplay();
+                
+                // Attach event listeners to existing food cards
+                setTimeout(() => {
+                    this.attachFoodCardEventListeners();
+                }, 100);
+            }
 
             // Initialize meal planner after DOM is ready
             setTimeout(() => {
@@ -80,6 +96,34 @@ class MoodFoodApp {
             console.error('Error loading data files:', error);
             // Fallback to embedded data if files not found
             this.loadFallbackData();
+        }
+    }
+
+    loadDatabaseData() {
+        // Load data from database passed via configuration
+        if (window.MOOD_FOOD_CONFIG) {
+            const config = window.MOOD_FOOD_CONFIG;
+            
+            // Structure database data for compatibility with existing code
+            if (config.selectedMood && (config.naturalFoods || config.processedFoods)) {
+                this.moodData = this.moodData || {};
+                this.moodData[config.selectedMood] = {
+                    natural: config.naturalFoods || [],
+                    processed: config.processedFoods || []
+                };
+            }
+            
+            // Store moods and preferences for later use
+            this.availableMoods = config.moods || [];
+            this.availablePreferences = config.dietaryPreferences || [];
+            
+            console.log('Database data loaded:', {
+                selectedMood: config.selectedMood,
+                naturalFoods: config.naturalFoods?.length || 0,
+                processedFoods: config.processedFoods?.length || 0,
+                moods: this.availableMoods.length,
+                preferences: this.availablePreferences.length
+            });
         }
     }
 
@@ -233,19 +277,50 @@ class MoodFoodApp {
         const moodBtn = document.querySelector(`[data-mood="${mood}"]`);
         if (moodBtn) moodBtn.classList.add('active');
         
-        // Show recommendations
-        this.showRecommendations(mood);
+        // Get selected dietary preference
+        const selectedPref = this.selectedPreferences.length > 0 ? this.selectedPreferences[0] : null;
+        const intensity = this.moodIntensity;
         
-        // Save mood entry locally
-        this.saveMoodEntry(mood, this.moodIntensity);
-        
-        // Track mood selection on server if available
-        if (this.trackingEnabled && this.sessionId) {
-            this.trackMoodSelection(mood, this.moodIntensity);
+        // Navigate to get database recommendations
+        let url = `${this.baseUrl}/mood-food?mood=${mood}&intensity=${intensity}`;
+        if (selectedPref) {
+            url += `&dietary_preference=${selectedPref}`;
         }
         
-        // Dispatch event for chatbot
-        this.dispatchMoodChange(mood);
+        // Store current state before navigation
+        localStorage.setItem('moodFood_selectedMood', mood);
+        localStorage.setItem('moodFood_selectedIntensity', intensity);
+        if (selectedPref) {
+            localStorage.setItem('moodFood_selectedPreference', selectedPref);
+        }
+        
+        // Navigate to get fresh data from database
+        window.location.href = url;
+    }
+
+    updateMoodDisplay() {
+        // Update UI to show selected mood
+        if (this.currentMood) {
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+            const moodBtn = document.querySelector(`[data-mood="${this.currentMood}"]`);
+            if (moodBtn) moodBtn.classList.add('active');
+            
+            // Show recommendations if they exist
+            const recommendations = document.getElementById('recommendations');
+            if (recommendations) {
+                recommendations.style.display = 'block';
+                recommendations.classList.add('active');
+            }
+            
+            // Update mood label
+            const selectedMoodSpan = document.getElementById('selected-mood');
+            if (selectedMoodSpan) {
+                selectedMoodSpan.textContent = this.currentMood.charAt(0).toUpperCase() + this.currentMood.slice(1);
+            }
+            
+            // Save mood entry locally
+            this.saveMoodEntry(this.currentMood, this.moodIntensity);
+        }
     }
 
     async trackMoodSelection(mood, intensity) {
@@ -297,31 +372,89 @@ class MoodFoodApp {
             selectedMoodSpan.textContent = mood.charAt(0).toUpperCase() + mood.slice(1);
         }
 
-        const data = this.moodData[mood];
-        if (!data) {
-            recommendations.innerHTML = '<div class="card"><p>Data mood tidak tersedia</p></div>';
-            return;
-        }
-
-        // Update natural foods section
-        const naturalFoodsContainer = document.getElementById('natural-foods');
-        if (naturalFoodsContainer && data.natural) {
-            naturalFoodsContainer.innerHTML = '';
-            data.natural.forEach(food => {
-                const foodCard = this.createFoodCard(food, 'natural');
-                naturalFoodsContainer.appendChild(foodCard);
-            });
-        }
+        // Since recommendations are now server-rendered, just activate the existing elements
+        // and attach event listeners to the food cards
+        this.attachFoodCardEventListeners();
         
-        // Update processed foods section
-        const processedFoodsContainer = document.getElementById('processed-foods');
-        if (processedFoodsContainer && data.processed) {
-            processedFoodsContainer.innerHTML = '';
-            data.processed.forEach(food => {
-                const foodCard = this.createFoodCard(food, 'processed');
-                processedFoodsContainer.appendChild(foodCard);
-            });
+        // Update any fallback JavaScript data if needed
+        const data = this.moodData[mood];
+        if (data) {
+            console.log(`Loaded recommendations for mood: ${mood}`, data);
         }
+    }
+
+    attachFoodCardEventListeners() {
+        // Attach event listeners to all food cards that are already rendered on the page
+        document.querySelectorAll('.food-card').forEach(foodCard => {
+            const foodName = foodCard.dataset.foodName;
+            const foodType = foodCard.dataset.type;
+            
+            // Add click tracking for the food card
+            foodCard.addEventListener('click', (e) => {
+                if (!e.target.closest('.btn')) {
+                    this.trackFoodInteraction(foodName, 'view', {
+                        type: foodType,
+                        mood: this.currentMood
+                    });
+                }
+            });
+
+            // Add event listeners for buttons
+            const addToPlanBtn = foodCard.querySelector('.add-to-plan-btn');
+            const viewNutritionBtn = foodCard.querySelector('.view-nutrition-btn');
+
+            if (addToPlanBtn) {
+                addToPlanBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.addToMealPlan(foodName);
+                    this.trackFoodInteraction(foodName, 'add_to_plan', {
+                        type: foodType,
+                        mood: this.currentMood
+                    });
+                });
+            }
+
+            if (viewNutritionBtn) {
+                viewNutritionBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.showNutritionDetailsFromCard(foodCard);
+                    this.trackFoodInteraction(foodName, 'click', {
+                        type: foodType,
+                        action: 'view_nutrition',
+                        mood: this.currentMood
+                    });
+                });
+            }
+        });
+    }
+
+    showNutritionDetailsFromCard(foodCard) {
+        const foodName = foodCard.dataset.foodName;
+        const foodType = foodCard.dataset.type;
+        
+        // Extract nutrition data from the rendered card
+        const nutritionItems = foodCard.querySelectorAll('.nutrition-item');
+        const benefitsElement = foodCard.querySelector('.food-benefits');
+        
+        let nutritionData = {};
+        nutritionItems.forEach(item => {
+            const label = item.querySelector('.nutrition-label')?.textContent.trim();
+            const value = item.querySelector('.nutrition-value')?.textContent.trim();
+            if (label && value) {
+                nutritionData[label.toLowerCase()] = value;
+            }
+        });
+
+        const food = {
+            name: foodName,
+            benefits: benefitsElement ? benefitsElement.textContent.trim() : 'Makanan bergizi',
+            calories: nutritionData.kalori || '0',
+            protein: nutritionData.protein ? nutritionData.protein.replace('g', '') : null,
+            carbs: nutritionData.karbo ? nutritionData.karbo.replace('g', '') : null,
+            fats: nutritionData.lemak ? nutritionData.lemak.replace('g', '') : null
+        };
+
+        this.showNutritionDetails(food);
     }    createFoodCard(food, type) {
         const foodCard = document.createElement('div');
         foodCard.className = 'food-card';
@@ -531,11 +664,13 @@ class MoodFoodApp {
             moodScoreElement.textContent = average.toFixed(1);
         }
 
-        // Update goals achieved (simplified calculation)
-        const goalsElement = document.getElementById('goals-achieved');
-        if (goalsElement) {
-            const goals = Math.min(moodHistory.length, 10); // Simple goal system
-            goalsElement.textContent = goals;
+        // Update food recommendations count
+        const recommendationsElement = document.getElementById('food-recommendations');
+        if (recommendationsElement) {
+            // Count unique food interactions or recommendations
+            const foodInteractions = JSON.parse(localStorage.getItem('foodInteractions') || '[]');
+            const uniqueFoods = new Set(foodInteractions.map(interaction => interaction.food)).size;
+            recommendationsElement.textContent = uniqueFoods || moodHistory.length;
         }
     }
 
@@ -842,7 +977,7 @@ class MoodFoodApp {
         // Update stats with server data
         const totalMealsElement = document.getElementById('total-meals');
         const moodScoreElement = document.getElementById('mood-score');
-        const goalsElement = document.getElementById('goals-achieved');
+        const recommendationsElement = document.getElementById('food-recommendations');
 
         if (totalMealsElement && data.total_mood_selections) {
             totalMealsElement.textContent = data.total_mood_selections;
@@ -855,8 +990,8 @@ class MoodFoodApp {
             moodScoreElement.textContent = avgScore.toFixed(1);
         }
 
-        if (goalsElement && data.total_sessions) {
-            goalsElement.textContent = Math.min(data.total_sessions, 10);
+        if (recommendationsElement && data.total_food_interactions) {
+            recommendationsElement.textContent = data.total_food_interactions;
         }
 
         // Store server data for charts
@@ -869,7 +1004,7 @@ class MoodFoodApp {
         
         const totalMealsElement = document.getElementById('total-meals');
         const moodScoreElement = document.getElementById('mood-score');
-        const goalsElement = document.getElementById('goals-achieved');
+        const recommendationsElement = document.getElementById('food-recommendations');
 
         if (totalMealsElement) {
             totalMealsElement.textContent = moodHistory.length;
@@ -880,9 +1015,10 @@ class MoodFoodApp {
             moodScoreElement.textContent = average.toFixed(1);
         }
 
-        if (goalsElement) {
-            const goals = Math.min(moodHistory.length, 10);
-            goalsElement.textContent = goals;
+        if (recommendationsElement) {
+            const foodInteractions = JSON.parse(localStorage.getItem('foodInteractions') || '[]');
+            const uniqueFoods = new Set(foodInteractions.map(interaction => interaction.food)).size;
+            recommendationsElement.textContent = uniqueFoods || moodHistory.length;
         }
     }
 
@@ -1120,6 +1256,28 @@ class MoodFoodApp {
 
     // Session tracking methods
     async trackFoodInteraction(foodName, interactionType, metadata = {}) {
+        // Store locally for stats regardless of tracking settings
+        const interaction = {
+            food: foodName,
+            type: interactionType,
+            timestamp: new Date().toISOString(),
+            metadata: metadata
+        };
+        
+        let foodInteractions = JSON.parse(localStorage.getItem('foodInteractions') || '[]');
+        foodInteractions.push(interaction);
+        
+        // Keep only last 100 interactions
+        if (foodInteractions.length > 100) {
+            foodInteractions = foodInteractions.slice(-100);
+        }
+        
+        localStorage.setItem('foodInteractions', JSON.stringify(foodInteractions));
+        
+        // Update stats display
+        this.updateStats();
+
+        // Also track on server if enabled
         if (!this.trackingEnabled || !this.sessionId) return;
 
         try {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\FoodCategoryModel;
+use App\Models\NutritionData;
 
 class FoodModel extends Model
 {
@@ -14,5 +15,10 @@ class FoodModel extends Model
     public function category()
     {
         return $this->belongsTo(FoodCategoryModel::class);
+    }
+
+    public function nutritionData()
+    {
+        return $this->hasOne(NutritionData::class, 'food_id');
     }
 }

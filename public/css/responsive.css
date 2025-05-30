@@ -45,9 +45,38 @@
         justify-content: center;
         padding: 10px 15px;
     }
-    
-    .nav-btn.back-btn {
+      .nav-btn.back-btn {
         margin-bottom: 5px;
+    }
+    
+    /* Food cards responsive */
+    .food-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .food-card {
+        padding: 15px;
+    }
+    
+    .food-actions {
+        flex-direction: column;
+    }
+    
+    .food-actions .btn {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    
+    /* Nutrition modal responsive */
+    .nutrition-modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+    
+    .nutrition-detail-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
     }
     
     .stats-grid {

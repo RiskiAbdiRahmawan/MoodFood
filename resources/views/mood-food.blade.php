@@ -44,8 +44,8 @@
                         <span class="stat-label">Avg Mood Score</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number" id="goals-achieved">0</span>
-                        <span class="stat-label">Goals Achieved</span>
+                        <span class="stat-number" id="food-recommendations">0</span>
+                        <span class="stat-label">Food Recommendations</span>
                     </div>
                 </div>
             </div>
@@ -70,9 +70,6 @@
                     </button>
                     <button class="nav-btn" data-section="analytics">
                         <i class="fas fa-chart-line"></i> Analytics
-                    </button>
-                    <button class="nav-btn" data-section="goals">
-                        <i class="fas fa-target"></i> Goals
                     </button>
                 </div>
             </div>
@@ -137,18 +134,110 @@
                 </div>
 
                 <!-- Recommendations -->
-                <div class="recommendations" id="recommendations">
+                <div class="recommendations {{ $selectedMood ? 'active' : '' }}" id="recommendations">
                     <div class="card">
-                        <h2><i class="fas fa-magic"></i> Rekomendasi untuk Mood: <span id="selected-mood"></span></h2>
+                        <h2><i class="fas fa-magic"></i> Rekomendasi untuk Mood: <span id="selected-mood">{{ $selectedMood->name ?? '' }}</span></h2>
                         
                         <div class="food-section">
                             <h3>🥗 Bahan Makanan Alami</h3>
-                            <div class="food-grid" id="natural-foods"></div>
+                            <div class="food-grid" id="natural-foods">
+                                @if($selectedMood && $naturalFoods->count() > 0)
+                                    @foreach($naturalFoods as $food)
+                                        <div class="food-card" data-type="natural" data-food-name="{{ $food->name }}">
+                                            <div class="food-header">
+                                                <h4>{{ $food->name }}</h4>
+                                                <span class="food-type">Alami</span>
+                                            </div>
+                                            <p class="food-benefits">{{ $food->description ?? 'Makanan sehat alami' }}</p>
+                                            @if($food->nutritionData)
+                                            <div class="nutrition-info">
+                                                <div class="nutrition-item">
+                                                    <span class="nutrition-label">Kalori</span>
+                                                    <span class="nutrition-value">{{ $food->nutritionData->calories_per_100g ?? '0' }}</span>
+                                                </div>
+                                                @if($food->nutritionData->protein_g)
+                                                <div class="nutrition-item">
+                                                    <span class="nutrition-label">Protein</span>
+                                                    <span class="nutrition-value">{{ $food->nutritionData->protein_g }}g</span>
+                                                </div>
+                                                @endif
+                                                @if($food->nutritionData->carbohydrates_g)
+                                                <div class="nutrition-item">
+                                                    <span class="nutrition-label">Karbo</span>
+                                                    <span class="nutrition-value">{{ $food->nutritionData->carbohydrates_g }}g</span>
+                                                </div>
+                                                @endif
+                                                @if($food->nutritionData->fat_g)
+                                                <div class="nutrition-item">
+                                                    <span class="nutrition-label">Lemak</span>
+                                                    <span class="nutrition-value">{{ $food->nutritionData->fat_g }}g</span>
+                                                </div>
+                                                @endif
+                                            </div>
+                                            @endif
+                                            <div class="food-actions">
+                                                <button class="btn btn-primary add-to-plan-btn" data-food="{{ $food->name }}">
+                                                    <i class="fas fa-plus"></i> Tambah ke Meal Plan
+                                                </button>
+                                                <button class="btn btn-secondary view-nutrition-btn" data-food="{{ $food->name }}">
+                                                    <i class="fas fa-info-circle"></i> Detail Nutrisi
+                                                </button>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
+                            </div>
                         </div>
 
                         <div class="food-section">
                             <h3>🍽️ Makanan Olahan</h3>
-                            <div class="food-grid" id="processed-foods"></div>
+                            <div class="food-grid" id="processed-foods">
+                                @if($selectedMood && $processedFoods->count() > 0)
+                                    @foreach($processedFoods as $food)
+                                        <div class="food-card" data-type="processed" data-food-name="{{ $food->name }}">
+                                            <div class="food-header">
+                                                <h4>{{ $food->name }}</h4>
+                                                <span class="food-type">Olahan</span>
+                                            </div>
+                                            <p class="food-benefits">{{ $food->description ?? 'Makanan olahan yang lezat' }}</p>
+                                            @if($food->nutritionData)
+                                            <div class="nutrition-info">
+                                                <div class="nutrition-item">
+                                                    <span class="nutrition-label">Kalori</span>
+                                                    <span class="nutrition-value">{{ $food->nutritionData->calories_per_100g ?? '0' }}</span>
+                                                </div>
+                                                @if($food->nutritionData->protein_g)
+                                                <div class="nutrition-item">
+                                                    <span class="nutrition-label">Protein</span>
+                                                    <span class="nutrition-value">{{ $food->nutritionData->protein_g }}g</span>
+                                                </div>
+                                                @endif
+                                                @if($food->nutritionData->carbohydrates_g)
+                                                <div class="nutrition-item">
+                                                    <span class="nutrition-label">Karbo</span>
+                                                    <span class="nutrition-value">{{ $food->nutritionData->carbohydrates_g }}g</span>
+                                                </div>
+                                                @endif
+                                                @if($food->nutritionData->fat_g)
+                                                <div class="nutrition-item">
+                                                    <span class="nutrition-label">Lemak</span>
+                                                    <span class="nutrition-value">{{ $food->nutritionData->fat_g }}g</span>
+                                                </div>
+                                                @endif
+                                            </div>
+                                            @endif
+                                            <div class="food-actions">
+                                                <button class="btn btn-primary add-to-plan-btn" data-food="{{ $food->name }}">
+                                                    <i class="fas fa-plus"></i> Tambah ke Meal Plan
+                                                </button>
+                                                <button class="btn btn-secondary view-nutrition-btn" data-food="{{ $food->name }}">
+                                                    <i class="fas fa-info-circle"></i> Detail Nutrisi
+                                                </button>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -228,36 +317,6 @@
                 </div>
             </div>
 
-            <!-- Goals Section -->
-            <div class="section" id="goals">
-                <div class="card">
-                    <h2><i class="fas fa-bullseye"></i> Nutrition Goals</h2>
-                    <div class="goals-grid">
-                        <div class="goal-item">
-                            <h3>Daily Calories</h3>
-                            <div class="progress-ring">
-                                <svg class="progress-ring">
-                                    <circle class="progress-ring-circle"></circle>
-                                    <circle class="progress-ring-progress" id="calories-progress"></circle>
-                                </svg>
-                            </div>
-                            <p><span id="calories-current">0</span> / <span id="calories-target">2000</span> kcal</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <h2><i class="fas fa-chart-line"></i> Progress Reports</h2>
-                    <div class="report-actions">
-                        <button class="submit-btn" onclick="window.moodFoodApp.generateNutritionReport()">
-                            <i class="fas fa-file-alt"></i> Download Nutrition Report
-                        </button>
-                        <button class="submit-btn secondary" onclick="window.moodFoodApp.updateCharts()">
-                            <i class="fas fa-sync-alt"></i> Refresh Analytics
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Education Section -->
             <div class="card education-section">
                 <h2>💡 Tahukah Kamu?</h2>
@@ -313,7 +372,52 @@
                 sessionId: {{ $sessionId ?? 'null' }},
                 csrfToken: '{{ csrf_token() }}',
                 baseUrl: '{{ url('/') }}',
-                trackingEnabled: true
+                trackingEnabled: true,
+                selectedMood: @if($selectedMood) '{{ $selectedMood->name }}' @else null @endif,
+                selectedDietaryPreference: @if($selectedDietaryPreference) '{{ $selectedDietaryPreference->name }}' @else null @endif,
+                naturalFoods: {!! json_encode($naturalFoods->map(function($food) {
+                    return [
+                        'id' => $food->id,
+                        'name' => $food->name,
+                        'description' => $food->description,
+                        'category' => $food->category->name ?? 'Unknown',
+                        'calories' => $food->nutritionData->calories_per_100g ?? 0,
+                        'protein' => $food->nutritionData->protein_g ?? 0,
+                        'carbs' => $food->nutritionData->carbohydrates_g ?? 0,
+                        'fats' => $food->nutritionData->fat_g ?? 0,
+                        'benefits' => $food->nutritionData->mood_effects ?? $food->description ?? 'Baik untuk kesehatan',
+                        'vitamins' => []
+                    ];
+                })->toArray()) !!},
+                processedFoods: {!! json_encode($processedFoods->map(function($food) {
+                    return [
+                        'id' => $food->id,
+                        'name' => $food->name,
+                        'description' => $food->description,
+                        'category' => $food->category->name ?? 'Unknown',
+                        'calories' => $food->nutritionData->calories_per_100g ?? 0,
+                        'protein' => $food->nutritionData->protein_g ?? 0,
+                        'carbs' => $food->nutritionData->carbohydrates_g ?? 0,
+                        'fats' => $food->nutritionData->fat_g ?? 0,
+                        'benefits' => $food->nutritionData->mood_effects ?? $food->description ?? 'Lezat dan bergizi',
+                        'vitamins' => []
+                    ];
+                })->toArray()) !!},
+                moods: {!! json_encode($moods->map(function($mood) {
+                    return [
+                        'id' => $mood->id,
+                        'name' => $mood->name,
+                        'emoji' => $mood->emoji_icon,
+                        'description' => $mood->description
+                    ];
+                })->toArray()) !!},
+                dietaryPreferences: {!! json_encode($dietaryPreferences->map(function($pref) {
+                    return [
+                        'id' => $pref->id,
+                        'name' => $pref->name,
+                        'emoji' => $pref->emoji_icon
+                    ];
+                })->toArray()) !!}
             };
 
             // Initialize the application when DOM is loaded

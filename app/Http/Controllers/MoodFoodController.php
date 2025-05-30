@@ -55,7 +55,7 @@ class MoodFoodController extends Controller
                 $this->trackMoodSelection($session, $mood, $request);
 
                 // Ambil rekomendasi berdasarkan mood & preferensi diet (jika ada)
-                $recommendationsQuery = $mood->recommendations()->with('food.category');
+                $recommendationsQuery = $mood->recommendations()->with(['food.category', 'food.nutritionData']);
 
                 if ($dietPref) {
                     $recommendationsQuery->where('dietary_preference_id', $dietPref->id);
