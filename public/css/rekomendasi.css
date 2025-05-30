@@ -1,0 +1,820 @@
+/* Import dari education.css patterns */
+.gradient-bg {
+    background: linear-gradient(135deg, #10b981 0%, #065f46 100%);
+}
+
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hover-scale {
+    transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+/* Hero Section dengan pattern dari education */
+.mood-selector {
+    background: linear-gradient(135deg, #10b981 0%, #065f46 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Floating Animation seperti education */
+.float {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+/* Fade-in Animation seperti education */
+.fade-in {
+    animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slide-up Animation seperti education */
+.slide-up {
+    animation: slideUp 0.8s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mood Card Styling seperti education mood-card */
+.mood-card {
+    position: relative;
+    cursor: pointer;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.mood-card:hover {
+    transform: translateY(-10px) scale(1.05);
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+}
+
+.mood-card .mood-icon-wrapper {
+    transition: transform 0.3s ease;
+}
+
+.mood-card:hover .mood-icon-wrapper {
+    transform: scale(1.2);
+}
+
+/* Category Buttons seperti tab-btn di education */
+.category-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.category-btn:not(.active) {
+    background: white;
+    color: #374151;
+    border-color: #e5e7eb;
+}
+
+.category-btn:not(.active):hover {
+    background: #f9fafb;
+    border-color: #10b981;
+    color: #10b981;
+    transform: translateY(-2px);
+}
+
+.category-btn.active {
+    background: linear-gradient(135deg, #10b981, #065f46);
+    color: white;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+/* Recommendation Cards seperti education card styling */
+.recommendation-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.recommendation-card .card-image {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #10b981, #065f46);
+    position: relative;
+    overflow: hidden;
+}
+
+.recommendation-card .card-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.recommendation-card:hover .card-image::before {
+    opacity: 1;
+}
+
+/* Badge Styling seperti education */
+.badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.benefit-badge {
+    background: linear-gradient(135deg, #10b981, #065f46);
+    color: white;
+    margin: 0.125rem;
+}
+
+.time-badge {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.difficulty-badge {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* Grid layout untuk recommendations */
+.recommendation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Custom styles untuk recommendations page */
+.mood-icon-large {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* Floating Action Button seperti education */
+.floating-action-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #10b981, #065f46);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.floating-action-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+}
+
+/* Mood summary styling */
+.mood-summary {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 95, 70, 0.1));
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    transition: all 0.3s ease;
+}
+.mood-summary.show {
+    display: block;
+    animation: slideUp 0.5s ease-out;
+}
+
+/* Stats badge */
+.recommendation-stats {
+    background: linear-gradient(135deg, #10b981 0%, #065f46 100%);
+}
+
+/* Loading State seperti education */
+.loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Loading state mengikuti style dari education */
+.loading {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+.loading.loaded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Custom Scrollbar seperti education */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #10b981;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #065f46;
+}
+
+/* Notification Styling */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #10b981, #065f46);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    z-index: 1000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+/* Modal Styling seperti education */
+.modal-overlay {
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.modal-content {
+    animation: modalSlideIn 0.3s ease-out;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Additional animations following education.css patterns */
+.bounce-in {
+    animation: bounceIn 0.8s ease-out;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Enhanced ripple effect */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(0);
+    animation: rippleEffect 0.6s ease-out;
+    pointer-events: none;
+}
+
+@keyframes rippleEffect {
+    to {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Progressive loading animation */
+.progressive-load {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease-out;
+}
+
+.progressive-load.loaded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Enhanced modal animations */
+@keyframes modalSlideOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+}
+
+/* Parallax background effect */
+.parallax-bg {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Stagger delay utilities */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* Food Detail Modal Enhancement */
+.food-detail-modal {
+    backdrop-filter: blur(10px);
+}
+
+.food-detail-modal .modal-content {
+    max-height: 85vh;
+    overflow-y: auto;
+    border-radius: 1.5rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.food-detail-modal .nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.food-detail-modal .nutrition-item {
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    border-radius: 0.75rem;
+    transition: transform 0.2s ease;
+}
+
+.food-detail-modal .nutrition-item:hover {
+    transform: scale(1.05);
+}
+
+.food-detail-modal .ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.5rem;
+}
+
+.food-detail-modal .ingredient-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #f8fafc;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.food-detail-modal .ingredient-item:hover {
+    background: #e2e8f0;
+}
+
+/* Food Details Section - Education Style */
+#food-details {
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    transition: all 0.5s ease;
+    animation: slideUp 0.5s ease-out;
+}
+
+#food-details.show {
+    display: block;
+    animation: slideUp 0.5s ease-out;
+}
+
+.food-details-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.food-details-close {
+    background: #ef4444;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 1.25rem;
+}
+
+.food-details-close:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+}
+
+.food-image-large {
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(135deg, #10b981, #065f46);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.food-image-large::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 100%);
+    opacity: 0.5;
+}
+
+.food-image-icon {
+    font-size: 4rem;
+    color: white;
+    z-index: 1;
+}
+
+.food-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.food-info-section {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border-left: 4px solid #10b981;
+}
+
+.nutrition-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.nutrition-stat {
+    text-align: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 0.75rem;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.nutrition-stat:hover {
+    border-color: #10b981;
+    transform: translateY(-2px);
+}
+
+.nutrition-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #10b981;
+}
+
+.benefits-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border-radius: 0.5rem;
+    border: 1px solid #10b981;
+    transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+}
+
+.benefit-icon {
+    color: #10b981;
+    font-size: 1.25rem;
+}
+
+.ingredients-section {
+    grid-column: 1 / -1;
+    background: #f1f5f9;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border-left: 4px solid #3b82f6;
+}
+
+.ingredients-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.ingredient-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.ingredient-item:hover {
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+}
+
+.ingredient-icon {
+    color: #3b82f6;
+    font-size: 1.25rem;
+}
+
+.cooking-instructions {
+    grid-column: 1 / -1;
+    background: #fef7ff;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border-left: 4px solid #a855f7;
+    margin-top: 1rem;
+}
+
+.instruction-steps {
+    counter-reset: step-counter;
+    margin-top: 1rem;
+}
+
+.instruction-step {
+    counter-increment: step-counter;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.instruction-step:hover {
+    border-color: #a855f7;
+    transform: translateX(5px);
+}
+
+.instruction-step::before {
+    content: counter(step-counter);
+    background: #a855f7;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+/* Animation untuk food details */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive untuk food details */
+@media (max-width: 768px) {
+    .food-details-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .nutrition-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .benefits-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .ingredients-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .food-image-large {
+        height: 200px;
+    }
+    
+    .food-image-icon {
+        font-size: 3rem;
+    }
+}
+
+/* Advanced hover effects */
+.pulse-on-hover:hover {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Intersection Observer Animation Classes */
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease-out;
+}
+
+.fade-in-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scale-in {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.6s ease-out;
+}
+
+.scale-in.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Enhanced animation classes for education.js patterns */
+.section-revealed {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.8s ease-out;
+}
+
+.animate-child {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease-out;
+}
+
+.child-revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tooltip {
+    opacity: 0;
+    animation: fadeInTooltip 0.2s ease-out forwards;
+    position: absolute;
+    background: #1f2937;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+@keyframes fadeInTooltip {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Enhanced hover states */
+.mood-card:hover,
+.food-card:hover,
+.recommendation-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Parallax and floating elements */
+.float {
+    will-change: transform;
+}
+
+.parallax-bg {
+    will-change: transform;
+    background-attachment: fixed;
+}
+
+.hero-background {
+    will-change: transform;
+}
+
+/* Enhanced grid animations */
+.grid > * {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease-out;
+}
+
+.grid > *.fade-in-up {
+    opacity: 1;
+    transform: translateY(0);
+}
