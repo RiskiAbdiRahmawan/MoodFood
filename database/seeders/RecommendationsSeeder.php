@@ -16,41 +16,239 @@ class RecommendationsSeeder extends Seeder
      */
     public function run()
     {
-        $sedih = MoodModel::where('name', 'sedih')->first();
-        $bahagia = MoodModel::where('name', 'bahagia')->first();
+        $recommendations = [
+            // Mood: Sedih (mood_id = 1)
+            [
+                'mood_id' => 1,
+                'food_id' => 1, // Pisang
+                'dietary_preference_id' => 2, // Vegan
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 1,
+                'food_id' => 2, // Ubi jalar
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 1,
+                'food_id' => 3, // Kacang mete
+                'dietary_preference_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 1,
+                'food_id' => 4, // Sup krim vegan
+                'dietary_preference_id' => 4,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 1,
+                'food_id' => 5, // Banana bread vegan
+                'dietary_preference_id' => 5,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
 
-        $vegetarian = DietaryPreferencesModel::where('name', 'vegetarian')->first();
-        $vegan = DietaryPreferencesModel::where('name', 'vegan')->first();
+            // Mood: Marah (mood_id = 2)
+            [
+                'mood_id' => 2,
+                'food_id' => 6, // Teh hijau
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 2,
+                'food_id' => 7, // Biji labu
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 2,
+                'food_id' => 8, // Blueberry
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 2,
+                'food_id' => 9, // Smoothie blueberry almond
+                'dietary_preference_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 2,
+                'food_id' => 10, // Energy ball kurma-kacang
+                'dietary_preference_id' => 6,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
 
-        $bayam = FoodModel::where('name', 'Bayam')->first();
-        $alpukat = FoodModel::where('name', 'Alpukat')->first();
-        $tempe = FoodModel::where('name', 'Tempe')->first();
-        $yogurt = FoodModel::where('name', 'Yogurt')->first();
+            // Mood: Cemas (mood_id = 3)
+            [
+                'mood_id' => 3,
+                'food_id' => 11, // Teh chamomile
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 3,
+                'food_id' => 12, // Kenari
+                'dietary_preference_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 3,
+                'food_id' => 13, // Coklat hitam
+                'dietary_preference_id' => 3,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 3,
+                'food_id' => 14, // Chia pudding coklat
+                'dietary_preference_id' => 6,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 3,
+                'food_id' => 15, // Vegan trail mix
+                'dietary_preference_id' => 5,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
 
-        // Rekomendasi untuk sedih dan vegetarian
-        RecommendationModel::updateOrCreate([
-            'mood_id' => $sedih->id,
-            'food_id' => $bayam->id,
-            'dietary_preference_id' => $vegetarian->id,
-        ]);
+            // Mood: Bahagia (mood_id = 4)
+            [
+                'mood_id' => 4,
+                'food_id' => 16, // Stroberi
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 4,
+                'food_id' => 17, // Jeruk
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 4,
+                'food_id' => 18, // Almond
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 4,
+                'food_id' => 19, // Dessert coklat-berry
+                'dietary_preference_id' => 6,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 4,
+                'food_id' => 20, // Salad buah saus kelapa
+                'dietary_preference_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
 
-        RecommendationModel::updateOrCreate([
-            'mood_id' => $sedih->id,
-            'food_id' => $alpukat->id,
-            'dietary_preference_id' => $vegan->id,
-        ]);
+            // Mood: Lelah (mood_id = 5)
+            [
+                'mood_id' => 5,
+                'food_id' => 18, // Almond
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 5,
+                'food_id' => 21, // Kurma
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 5,
+                'food_id' => 22, // Bayam
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 5,
+                'food_id' => 23, // Protein shake vegan
+                'dietary_preference_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 5,
+                'food_id' => 24, // Sup bayam tofu
+                'dietary_preference_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
 
-        // Rekomendasi untuk bahagia tanpa preferensi diet khusus (null)
-        RecommendationModel::updateOrCreate([
-            'mood_id' => $bahagia->id,
-            'food_id' => $tempe->id,
-            'dietary_preference_id' => null,
-        ]);
+            // Mood: Stres (mood_id = 6)
+            [
+                'mood_id' => 6,
+                'food_id' => 25, // Oat bebas gluten
+                'dietary_preference_id' => 3,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 6,
+                'food_id' => 26, // Biji chia
+                'dietary_preference_id' => 5,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 6,
+                'food_id' => 27, // Overnight oat
+                'dietary_preference_id' => 4,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 6,
+                'food_id' => 28, // Granola bar vegan
+                'dietary_preference_id' => 6,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 6,
+                'food_id' => 29, // Granola bar vegan
+                'dietary_preference_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 6,
+                'food_id' => 30, // Granola bar vegan
+                'dietary_preference_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ];
 
-        RecommendationModel::updateOrCreate([
-            'mood_id' => $bahagia->id,
-            'food_id' => $yogurt->id,
-            'dietary_preference_id' => null,
-        ]);
+        foreach ($recommendations as $recommendation) {
+            RecommendationModel::create($recommendation);
+        }
     }
 }

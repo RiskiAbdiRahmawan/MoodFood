@@ -582,7 +582,7 @@ class MoodFoodApp {
                         </div>` : ''}
                     </div>
                     <div class="nutrition-benefits">
-                        <h4>Manfaat untuk Mood:</h4>
+                        <h4>Deskripsi:</h4>
                         <p>${food.benefits}</p>
                     </div>
                     <div class="nutrition-actions">
