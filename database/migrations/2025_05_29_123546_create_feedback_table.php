@@ -13,17 +13,10 @@ return new class extends Migration
     {
         Schema::create('feedback', function (Blueprint $table) {
             $table->id();
-            $table->string('session_id');
-            $table->enum('type', ['general', 'recommendation', 'bug_report', 'feature_request'])->default('general');
-            $table->integer('rating')->nullable(); // 1-5 rating
-            $table->text('content'); // Feedback content
-            $table->string('scope')->nullable(); // Feedback scope
-            $table->string('ip_address')->nullable();
-            $table->text('user_agent')->nullable();
+            $table->string('name');
+            $table->string('email');
+            $table->text('message');
             $table->timestamps();
-            
-            $table->index(['type', 'created_at']);
-            $table->index(['rating', 'created_at']);
         });
     }
 

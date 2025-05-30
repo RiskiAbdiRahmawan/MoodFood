@@ -357,7 +357,6 @@
     </div>
 </section>
 
-<!-- Section: Ulasan Pengguna -->
 <section id="reviews" class="py-20 lg:py-32 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 relative overflow-hidden">
     <!-- Background decorative elements -->
     <div class="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse-slow"></div>
@@ -373,94 +372,15 @@
             </p>
         </div>
         
-        <div class="grid gap-8 sm:grid-cols-1 lg:grid-cols-3 max-w-7xl mx-auto">
-            <!-- Card Ulasan 1 -->
-            <div class="group bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20 card-hover relative overflow-hidden" data-aos="fade-up" data-aos-delay="100">
-                <!-- Background gradient -->
-                <div class="absolute inset-0 bg-gradient-to-br from-green-400/5 to-blue-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div class="relative z-10">
-                    <div class="flex items-center space-x-4 mb-6">
-                        <div class="relative">
-                            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" class="w-16 h-16 rounded-full object-cover shadow-lg">
-                            <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold text-gray-800">Aulia Rahma</h4>
-                            <div class="flex text-yellow-400 text-lg">
-                                ★★★★★
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 leading-relaxed text-lg">
-                        "MoodFood membantu banget pas lagi stres! Rekomendasi makanannya enak dan bikin hati tenang. UI-nya juga cakep!"
-                    </p>
-                </div>
-            </div>
-            
-            <!-- Card Ulasan 2 -->
-            <div class="group bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20 card-hover relative overflow-hidden" data-aos="fade-up" data-aos-delay="200">
-                <!-- Background gradient -->
-                <div class="absolute inset-0 bg-gradient-to-br from-blue-400/5 to-purple-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div class="relative z-10">
-                    <div class="flex items-center space-x-4 mb-6">
-                        <div class="relative">
-                            <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="User" class="w-16 h-16 rounded-full object-cover shadow-lg">
-                            <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-blue-500 rounded-full border-2 border-white flex items-center justify-center">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold text-gray-800">Rizky Maulana</h4>
-                            <div class="flex text-yellow-400 text-lg">
-                                ★★★★☆
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 leading-relaxed text-lg">
-                        "Awalnya ragu, tapi ternyata hasilnya nyata. Sekarang tiap galau langsung buka MoodFood. Rekomendasi makanannya cocok!"
-                    </p>
-                </div>
-            </div>
-            
-            <!-- Card Ulasan 3 -->
-            <div class="group bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20 card-hover relative overflow-hidden" data-aos="fade-up" data-aos-delay="300">
-                <!-- Background gradient -->
-                <div class="absolute inset-0 bg-gradient-to-br from-purple-400/5 to-pink-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div class="relative z-10">
-                    <div class="flex items-center space-x-4 mb-6">
-                        <div class="relative">
-                            <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="User" class="w-16 h-16 rounded-full object-cover shadow-lg">
-                            <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-purple-500 rounded-full border-2 border-white flex items-center justify-center">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold text-gray-800">Nadya Putri</h4>
-                            <div class="flex text-yellow-400 text-lg">
-                                ★★★★★
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 leading-relaxed text-lg">
-                        "UI-nya lucu, UX-nya smooth, dan insight makanannya insightful banget. MoodFood bener-bener jadi sahabat baru aku!"
-                    </p>
-                </div>
-            </div>
+        <div id="reviews-container" class="grid gap-8 sm:grid-cols-1 lg:grid-cols-3 max-w-7xl mx-auto">
+            <!-- Reviews will be dynamically inserted here -->
+        </div>
+        
+        <div id="no-reviews" class="text-center text-gray-600 hidden">
+            Belum ada ulasan. Jadilah yang pertama memberikan feedback!
         </div>
     </div>
-</section>
-  
+</section>  
 
     <!-- Feedback Form Section -->
 <section class="py-20 bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 relative overflow-hidden" id="feedback">
@@ -494,8 +414,12 @@
         <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8 md:p-12 relative overflow-hidden" data-aos="fade-up" data-aos-delay="200">
             <!-- Card background gradient -->
             <div class="absolute inset-0 bg-gradient-to-br from-white/50 to-gray-50/50 rounded-3xl"></div>
-            
-            <form action="" method="POST" class="space-y-8 relative z-10">
+            @if (session('success'))
+    <div class="mt-4 text-green-600 text-center">
+        {{ session('success') }}
+    </div>
+@endif
+            <form action="{{ route('feedback.store') }}" method="POST" class="space-y-8 relative z-10">
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="group" data-aos="fade-right" data-aos-delay="300">
@@ -591,6 +515,51 @@
 @include('components.footer')
 
 <script src="{{ asset('js/landing-page.js') }}"></script>
-
+<!-- JavaScript to fetch and render reviews -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/api/feedback')
+            .then(response => response.json())
+            .then(data => {
+                const reviewsContainer = document.getElementById('reviews-container');
+                const noReviewsMessage = document.getElementById('no-reviews');
+    
+                if (data.length === 0) {
+                    noReviewsMessage.classList.remove('hidden');
+                    return;
+                }
+    
+                data.forEach((feedback, index) => {
+                    const colors = [
+                        { bg: 'green-400', badge: 'green-500' },
+                        { bg: 'blue-400', badge: 'blue-500' },
+                        { bg: 'purple-400', badge: 'purple-500' }
+                    ];
+                    const color = colors[index % 3];
+                    const gender = Math.random() > 0.5 ? 'men' : 'women';
+                    const imageId = Math.floor(Math.random() * 99) + 1;
+    
+                    const reviewCard = `
+                        <div class="group bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20 card-hover relative overflow-hidden" data-aos="fade-up" data-aos-delay="${100 + index * 100}">
+                            <div class="absolute inset-0 bg-gradient-to-br from-${color.bg}/5 to-${color.bg === 'green-400' ? 'blue-400' : color.bg === 'blue-400' ? 'purple-400' : 'pink-400'}/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-center space-x-4 mb-6">
+                                    <div>
+                                        <h4 class="text-xl font-bold text-gray-800">${feedback.name}</h4>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 leading-relaxed text-lg">"${feedback.message}"</p>
+                            </div>
+                        </div>
+                    `;
+                    reviewsContainer.innerHTML += reviewCard;
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching feedback:', error);
+                document.getElementById('no-reviews').classList.remove('hidden');
+            });
+    });
+    </script>
 </body>
 </html>
