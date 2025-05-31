@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize performance optimizations
     initializePerformanceOptimizations();
+    
+    // Load review cards
+    loadReviewCards();
 });
 
 /**
@@ -103,7 +106,7 @@ function initializeSmoothScrolling() {
  * Initialize form validation with enhanced UX
  */
 function initializeFormValidation() {
-    const form = document.querySelector('#feedback form');
+    const form = document.querySelector('#feedback-form');
     
     if (form) {
         const inputs = form.querySelectorAll('input, textarea');
@@ -146,10 +149,35 @@ function initializeFormValidation() {
                 const submitBtn = this.querySelector('button[type="submit"]');
                 if (submitBtn) {
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span>Mengirim...</span>';
+                    const submitText = submitBtn.querySelector('.submit-text');
+                    const submitIcon = submitBtn.querySelector('.submit-icon');
+                    const loadingSpinner = submitBtn.querySelector('.loading-spinner');
+                    
+                    if (submitText) submitText.textContent = 'Mengirim...';
+                    if (submitIcon) submitIcon.classList.add('hidden');
+                    if (loadingSpinner) loadingSpinner.classList.remove('hidden');
                 }
+                
+                // Store that we're submitting from this page
+                sessionStorage.setItem('feedback_submitted', 'true');
             }
         });
+    }
+    
+    // Check if we just submitted feedback and handle post-submit actions
+    if (sessionStorage.getItem('feedback_submitted') === 'true') {
+        sessionStorage.removeItem('feedback_submitted');
+        
+        // Scroll to feedback section smoothly
+        setTimeout(() => {
+            const feedbackSection = document.getElementById('feedback');
+            if (feedbackSection) {
+                feedbackSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }, 100);
     }
 }
 
@@ -358,6 +386,102 @@ function throttle(func, limit) {
     }
 }
 
+/**
+ * Load and display review cards from API
+ */
+function loadReviewCards() {
+    console.log('Loading review cards...');
+    
+    // Simple fallback function to create review cards
+    function createSimpleReviewCard(feedback, index) {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg p-6 shadow-lg mb-4 animate-fade-in';
+        card.innerHTML = `
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                    ${(feedback.name || 'A').charAt(0).toUpperCase()}
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg">${feedback.name || 'Anonymous'}</h4>
+                    <p class="text-gray-500 text-sm">${feedback.formatted_date || 'Tanggal tidak tersedia'}</p>
+                </div>
+            </div>
+            <div class="text-yellow-400 mb-2">★★★★★</div>
+            <p class="text-gray-700">"${feedback.message || 'Tidak ada pesan.'}"</p>
+        `;
+        return card;
+    }
+
+    fetch('/api/feedback')
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Feedback data received:', data);
+            const reviewsContainer = document.getElementById('reviews-container');
+            const noReviewsMessage = document.getElementById('no-reviews');
+            
+            console.log('Container element:', reviewsContainer);
+            console.log('No reviews element:', noReviewsMessage);
+
+            if (!data || data.length === 0) {
+                console.log('No data found, showing no reviews message');
+                if (noReviewsMessage) {
+                    noReviewsMessage.classList.remove('hidden');
+                }
+                return;
+            }
+            
+            // Hide no reviews message if there's data
+            if (noReviewsMessage) {
+                noReviewsMessage.classList.add('hidden');
+            }
+            
+            data.forEach((feedback, index) => {
+                // Check if feedback object has required properties
+                if (!feedback || !feedback.name || !feedback.message) {
+                    console.warn('Invalid feedback object:', feedback);
+                    return;
+                }
+                
+                try {
+                    // Use simple cards for now to ensure they work
+                    const simpleCard = createSimpleReviewCard(feedback, index);
+                    reviewsContainer.appendChild(simpleCard);
+                    console.log(`Added simple review card ${index + 1} for ${feedback.name}`);
+                } catch (cardError) {
+                    console.error('Error creating review card:', cardError);
+                }
+            });
+            
+            console.log(`Total ${data.length} review cards added`);
+            
+            // Initialize AOS animations for new elements
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching feedback:', error);
+            try {
+                if (typeof showNotification === 'function') {
+                    showNotification('Gagal memuat ulasan pengguna', 'error');
+                }
+            } catch (notifError) {
+                console.error('Error showing notification:', notifError);
+            }
+            const noReviewsMessage = document.getElementById('no-reviews');
+            if (noReviewsMessage) {
+                noReviewsMessage.classList.remove('hidden');
+            }
+        });
+}
+
+// Export functions for external access
+window.loadReviewCards = loadReviewCards;
+window.showNotification = showNotification;
+
 // Export functions for testing or external use
 window.LandingPage = {
     initializeAOS,
@@ -367,5 +491,6 @@ window.LandingPage = {
     validateField,
     showNotification,
     debounce,
-    throttle
+    throttle,
+    loadReviewCards
 };

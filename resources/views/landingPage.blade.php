@@ -8,8 +8,8 @@
     <link href="{{ asset('css/landing-page.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 </head>
 <body class="font-['Inter'] bg-gradient-to-br from-gray-50 via-white to-green-50 overflow-x-hidden">
     <!-- Hero Section -->
@@ -415,11 +415,61 @@
             <!-- Card background gradient -->
             <div class="absolute inset-0 bg-gradient-to-br from-white/50 to-gray-50/50 rounded-3xl"></div>
             @if (session('success'))
-    <div class="mt-4 text-green-600 text-center">
-        {{ session('success') }}
-    </div>
-@endif
-            <form action="{{ route('feedback.store') }}" method="POST" class="space-y-8 relative z-10">
+                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400 rounded-lg shadow-sm">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">
+                                {{ session('success') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+             @endif
+
+        @if (session('error'))
+            <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400 rounded-lg shadow-sm">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800">
+                            {{ session('error') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg shadow-sm">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">Mohon periksa input berikut:</h3>
+                        <div class="mt-2 text-sm text-yellow-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+            <form action="{{ route('feedback.store') }}" method="POST" class="space-y-8 relative z-10" id="feedback-form">
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="group" data-aos="fade-right" data-aos-delay="300">
@@ -431,8 +481,8 @@
                                 Nama Lengkap
                             </span>
                         </label>
-                        <input type="text" name="name" id="name" required
-                            class="w-full rounded-2xl border-2 border-gray-200 focus:ring-4 focus:ring-green-100 focus:border-green-400 px-6 py-4 shadow-sm transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-gray-400 text-lg"
+                        <input type="text" name="name" id="name" required value="{{ old('name') }}"
+                            class="w-full rounded-2xl border-2 {{ $errors->has('name') ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 focus:border-green-400 focus:ring-green-100' }} focus:ring-4 px-6 py-4 shadow-sm transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-gray-400 text-lg"
                             placeholder="Masukkan nama lengkap Anda">
                     </div>
                     <div class="group" data-aos="fade-left" data-aos-delay="400">
@@ -444,8 +494,8 @@
                                 Email Address
                             </span>
                         </label>
-                        <input type="email" name="email" id="email" required
-                            class="w-full rounded-2xl border-2 border-gray-200 focus:ring-4 focus:ring-green-100 focus:border-green-400 px-6 py-4 shadow-sm transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-gray-400 text-lg"
+                        <input type="email" name="email" id="email" required value="{{ old('email') }}"
+                            class="w-full rounded-2xl border-2 {{ $errors->has('email') ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 focus:border-green-400 focus:ring-green-100' }} focus:ring-4 px-6 py-4 shadow-sm transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-gray-400 text-lg"
                             placeholder="contoh@email.com">
                     </div>
                 </div>
@@ -460,17 +510,23 @@
                         </span>
                     </label>
                     <textarea name="message" id="message" rows="6" required
-                        class="w-full rounded-2xl border-2 border-gray-200 focus:ring-4 focus:ring-green-100 focus:border-green-400 px-6 py-4 shadow-sm resize-none transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-gray-400 text-lg"
-                        placeholder="Ceritakan pengalaman Anda dengan MoodFood atau berikan saran untuk perbaikan..."></textarea>
+                        class="w-full rounded-2xl border-2 {{ $errors->has('message') ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 focus:border-green-400 focus:ring-green-100' }} focus:ring-4 px-6 py-4 shadow-sm resize-none transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-gray-400 text-lg"
+                        placeholder="Ceritakan pengalaman Anda dengan MoodFood atau berikan saran untuk perbaikan...">{{ old('message') }}</textarea>
                 </div>
 
                 <div class="text-center" data-aos="fade-up" data-aos-delay="600">
-                    <button type="submit"
-                        class="group inline-flex items-center px-10 py-4 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold text-lg rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
-                        <span>Kirim Feedback</span>
-                        <svg class="ml-3 w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button type="submit" id="submit-btn"
+                        class="group inline-flex items-center px-10 py-4 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold text-lg rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                        <span class="submit-text">Kirim Feedback</span>
+                        <svg class="ml-3 w-5 h-5 transform group-hover:translate-x-1 transition-transform submit-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                         </svg>
+                        <div class="loading-spinner hidden ml-3">
+                            <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
                     </button>
                     
                     <p class="mt-4 text-gray-500 text-sm">
@@ -515,51 +571,53 @@
 @include('components.footer')
 
 <script src="{{ asset('js/landing-page.js') }}"></script>
-<!-- JavaScript to fetch and render reviews -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        fetch('/api/feedback')
-            .then(response => response.json())
-            .then(data => {
-                const reviewsContainer = document.getElementById('reviews-container');
-                const noReviewsMessage = document.getElementById('no-reviews');
-    
-                if (data.length === 0) {
-                    noReviewsMessage.classList.remove('hidden');
-                    return;
+    // Session-based notifications
+    @if (session('success'))
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (typeof showNotification === 'function') {
+                    showNotification('{{ session('success') }}', 'success');
                 }
+                
+                // If refresh_reviews session exists, reload review cards
+                @if (session('refresh_reviews'))
+                    setTimeout(() => {
+                        if (typeof loadReviewCards === 'function') {
+                            console.log('Refreshing review cards after new feedback...');
+                            // Clear existing reviews
+                            const reviewsContainer = document.getElementById('reviews-container');
+                            if (reviewsContainer) {
+                                reviewsContainer.innerHTML = '';
+                            }
+                            // Reload reviews
+                            loadReviewCards();
+                        }
+                    }, 1000);
+                @endif
+            }, 500);
+        });
+    @endif
     
-                data.forEach((feedback, index) => {
-                    const colors = [
-                        { bg: 'green-400', badge: 'green-500' },
-                        { bg: 'blue-400', badge: 'blue-500' },
-                        { bg: 'purple-400', badge: 'purple-500' }
-                    ];
-                    const color = colors[index % 3];
-                    const gender = Math.random() > 0.5 ? 'men' : 'women';
-                    const imageId = Math.floor(Math.random() * 99) + 1;
+    @if (session('error'))
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (typeof showNotification === 'function') {
+                    showNotification('{{ session('error') }}', 'error');
+                }
+            }, 500);
+        });
+    @endif
     
-                    const reviewCard = `
-                        <div class="group bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20 card-hover relative overflow-hidden" data-aos="fade-up" data-aos-delay="${100 + index * 100}">
-                            <div class="absolute inset-0 bg-gradient-to-br from-${color.bg}/5 to-${color.bg === 'green-400' ? 'blue-400' : color.bg === 'blue-400' ? 'purple-400' : 'pink-400'}/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-center space-x-4 mb-6">
-                                    <div>
-                                        <h4 class="text-xl font-bold text-gray-800">${feedback.name}</h4>
-                                    </div>
-                                </div>
-                                <p class="text-gray-700 leading-relaxed text-lg">"${feedback.message}"</p>
-                            </div>
-                        </div>
-                    `;
-                    reviewsContainer.innerHTML += reviewCard;
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching feedback:', error);
-                document.getElementById('no-reviews').classList.remove('hidden');
-            });
-    });
+    @if ($errors->any())
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (typeof showNotification === 'function') {
+                    showNotification('Mohon periksa kembali form yang Anda isi', 'warning');
+                }
+            }, 500);
+        });
+    @endif
     </script>
 </body>
 </html>
