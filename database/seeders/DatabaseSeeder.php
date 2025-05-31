@@ -33,6 +33,9 @@ class DatabaseSeeder extends Seeder
             // Relationships and advanced data
             RecommendationsSeeder::class,
             NutritionDataSeeder::class,
+            
+            // User feedback and reviews
+            FeedbackSeeder::class,
         ]);
     }
 }
