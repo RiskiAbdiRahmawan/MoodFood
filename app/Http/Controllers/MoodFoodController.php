@@ -33,6 +33,7 @@ class MoodFoodController extends Controller
         // Initialize or update user session
         $session = $this->initializeSession($request);
         
+        $feedbacks = Feedback::latest(3)->get();
         $moods = MoodModel::all();
         $dietaryPreferences = DietaryPreferencesModel::all();
 

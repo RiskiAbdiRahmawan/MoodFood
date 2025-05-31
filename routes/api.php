@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FeedbackController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MoodFoodController;
@@ -10,3 +11,4 @@ Route::post('/submit-feedback', [MoodFoodController::class, 'submitFeedback']);
 Route::post('/track-mood-selection', [MoodFoodController::class, 'trackMoodSelectionAPI']);
 Route::get('/analytics', [MoodFoodController::class, 'getAnalytics']);
 Route::get('/initialize-session', [MoodFoodController::class, 'initializeSession']);
+Route::get('/feedback', [FeedbackController::class, 'getFeedback']);
