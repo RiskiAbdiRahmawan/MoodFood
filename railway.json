@@ -1,7 +1,5 @@
-{
-  "build": {
-    "builder": "HEROKU",
-    "buildCommand": "composer install --no-dev --optimize-autoloader"
+{  "build": {
+    "builder": "DOCKERFILE"
   },
   "deploy": {
     "numReplicas": 1,

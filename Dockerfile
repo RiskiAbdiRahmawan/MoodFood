@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.2-cli
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -32,17 +32,11 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Configure Apache
-RUN a2enmod rewrite
-COPY .docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+# Generate optimized files (skip cache commands that need DB)
+RUN php artisan config:clear
 
-# Generate optimized files
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# Expose dynamic port
+EXPOSE $PORT
 
-# Expose port
-EXPOSE 80
-
-# Start command
-CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
+# Start command with dynamic port
+CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"]
