@@ -10,6 +10,7 @@ use App\Models\FoodAnalytics;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Str;
 
 class MoodFoodController extends Controller
 {
@@ -24,16 +25,14 @@ class MoodFoodController extends Controller
     }
 
     /**
-     * Display the MoodFood Pro page
-     *
-     * @return \Illuminate\View\View
+     * Display the MoodFood Pro page with improved session management
      */
     public function moodFoodPro(Request $request)
     {
-        // Initialize or update user session
+        // Initialize or update user session with improved persistence
         $session = $this->initializeSession($request);
         
-        $feedbacks = Feedback::latest(3)->get();
+        $feedbacks = Feedback::latest()->limit(3)->get();
         $moods = MoodModel::all();
         $dietaryPreferences = DietaryPreferencesModel::all();
 
@@ -78,7 +77,7 @@ class MoodFoodController extends Controller
             }
         }
 
-        // Tampilkan view dengan data
+        // Tampilkan view dengan data dan session info
         return view('mood-food', [
             'dietaryPreferences' => $dietaryPreferences,
             'selectedMood' => $mood,
@@ -87,6 +86,15 @@ class MoodFoodController extends Controller
             'processedFoods' => $processedFoods,
             'moods' => $moods,
             'sessionId' => $session->id,
+            'sessionToken' => $session->session_id,
+            'sessionInfo' => [
+                'is_returning_visitor' => $session->total_visits > 1,
+                'total_visits' => $session->total_visits,
+                'expires_at' => $session->expires_at ?? now()->addDays(30),
+                'meal_plans_count' => $session->mealPlans()->notExpired()->count(),
+                'last_activity' => $session->last_activity_at,
+                'preferences' => $session->preferences ?? []
+            ]
         ]);
     }
 
@@ -238,34 +246,188 @@ class MoodFoodController extends Controller
     }
 
     /**
-     * Initialize or retrieve user session
+     * IMPROVED: Initialize or retrieve user session with persistence
      */
     private function initializeSession(Request $request)
     {
-        $sessionToken = $request->session()->get('mood_food_session');
+        // Try multiple sources for session identifier
+        $sessionToken = $this->getSessionIdentifier($request);
         
         if ($sessionToken) {
-            $session = UserSession::where('session_id', $sessionToken)->first();
+            // Find existing valid session
+            $session = UserSession::where('session_id', $sessionToken)
+                ->where(function($query) {
+                    $query->where('expires_at', '>', now())
+                          ->orWhereNull('expires_at');
+                })
+                ->first();
+            
             if ($session) {
-                // Update last activity
-                $session->update(['last_activity_at' => now()]);
+                // Update for returning visitor
+                $session->increment('total_visits');
+                $session->update([
+                    'last_activity_at' => now(),
+                    'last_ip_address' => $request->ip(),
+                    'last_user_agent' => $request->userAgent(),
+                    'expires_at' => $session->expires_at ?? now()->addDays(30)
+                ]);
+                
+                // Auto-extend if close to expiry
+                if ($session->expires_at && $session->expires_at->diffInDays(now()) < 5) {
+                    $session->update(['expires_at' => now()->addDays(30)]);
+                }
+                
                 return $session;
             }
         }
 
-        // Create new session
-        $sessionToken = uniqid('mf_', true);
-        $request->session()->put('mood_food_session', $sessionToken);
-
-        return UserSession::create([
-            'session_id' => $sessionToken,
+        // Create new persistent session
+        $newSessionToken = $this->generateSessionToken($request);
+        
+        $session = UserSession::create([
+            'session_id' => $newSessionToken,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
+            'last_ip_address' => $request->ip(),
+            'last_user_agent' => $request->userAgent(),
             'preferences' => [],
             'last_activity_at' => now(),
             'first_visit_at' => now(),
             'total_visits' => 1,
+            'expires_at' => now()->addDays(30) // 30 days persistence
         ]);
+
+        // Store session identifier in multiple ways
+        $this->storeSessionIdentifier($request, $newSessionToken);
+
+        return $session;
+    }
+
+    /**
+     * Get session identifier from multiple sources
+     */
+    private function getSessionIdentifier(Request $request)
+    {
+        return $request->cookie('moodfood_session') ?? 
+               $request->session()->get('mood_food_session') ??
+               $request->header('X-MoodFood-Session');
+    }
+
+    /**
+     * Generate unique session token
+     */
+    private function generateSessionToken(Request $request)
+    {
+        // Create persistent identifier based on browser fingerprint
+        $fingerprint = hash('sha256', 
+            $request->userAgent() . 
+            $request->ip() . 
+            ($request->header('Accept-Language') ?? '') .
+            date('Y-m-d') // Changes daily for privacy
+        );
+        
+        return 'mf_' . substr($fingerprint, 0, 16) . '_' . Str::random(16);
+    }
+
+    /**
+     * Store session identifier persistently
+     */
+    private function storeSessionIdentifier(Request $request, $sessionToken)
+    {
+        // Store in Laravel session
+        $request->session()->put('mood_food_session', $sessionToken);
+        
+        // Store in cookie for persistence
+        cookie()->queue(cookie(
+            'moodfood_session', 
+            $sessionToken, 
+            60 * 24 * 30, // 30 days
+            '/', 
+            null, 
+            request()->secure(),
+            true
+        ));
+    }
+
+    /**
+     * NEW: Session management API endpoints
+     */
+    public function checkSession(Request $request)
+    {
+        $sessionToken = $this->getSessionIdentifier($request);
+        
+        if (!$sessionToken) {
+            return response()->json(['has_session' => false]);
+        }
+
+        $session = UserSession::where('session_id', $sessionToken)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if (!$session) {
+            return response()->json(['has_session' => false]);
+        }
+
+        return response()->json([
+            'has_session' => true,
+            'session_info' => [
+                'id' => $session->id,
+                'total_visits' => $session->total_visits,
+                'expires_at' => $session->expires_at,
+                'meal_plans_count' => $session->mealPlans()->notExpired()->count(),
+                'is_returning_visitor' => $session->total_visits > 1
+            ]
+        ]);
+    }
+
+    public function clearSession(Request $request)
+    {
+        $sessionToken = $this->getSessionIdentifier($request);
+        
+        if ($sessionToken) {
+            UserSession::where('session_id', $sessionToken)->delete();
+            $request->session()->forget('mood_food_session');
+            cookie()->queue(cookie()->forget('moodfood_session'));
+        }
+
+        return response()->json(['message' => 'Session cleared successfully']);
+    }
+
+    public function exportAllData(Request $request)
+    {
+        $sessionToken = $this->getSessionIdentifier($request);
+        
+        if (!$sessionToken) {
+            return response()->json(['error' => 'No session found'], 401);
+        }
+
+        $session = UserSession::where('session_id', $sessionToken)
+            ->with(['mealPlans.items.recipe'])
+            ->first();
+
+        if (!$session) {
+            return response()->json(['error' => 'Session not found'], 404);
+        }
+
+        $exportData = [
+            'app' => 'MoodFood Pro',
+            'exported_at' => now()->toISOString(),
+            'session_info' => [
+                'total_visits' => $session->total_visits,
+                'preferences' => $session->preferences
+            ],
+            'meal_plans' => $session->mealPlans->map(function ($plan) {
+                return [
+                    'name' => $plan->name,
+                    'start_date' => $plan->start_date,
+                    'end_date' => $plan->end_date,
+                    'preferences' => $plan->preferences,
+                    'items_count' => $plan->items->count()
+                ];
+            })
+        ];
+
+        return response()->json($exportData);
     }
 
     /**

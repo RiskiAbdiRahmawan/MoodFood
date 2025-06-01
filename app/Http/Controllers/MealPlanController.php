@@ -24,6 +24,7 @@ class MealPlanController extends Controller
         }
 
         $mealPlans = MealPlan::where('session_id', $sessionId)
+            ->notExpired()
             ->with(['items.recipe', 'items.food'])
             ->orderBy('start_date', 'desc')
             ->get()

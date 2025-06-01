@@ -14,6 +14,7 @@ class MealPlan extends Model
         'name',
         'start_date',
         'end_date',
+        'expires_at',  // Add expires_at
         'preferences',
         'notes',
         'total_calories',
@@ -24,6 +25,7 @@ class MealPlan extends Model
         'preferences' => 'array',
         'start_date' => 'date',
         'end_date' => 'date',
+        'expires_at' => 'datetime',  // Add expires_at cast
         'is_active' => 'boolean'
     ];
 
@@ -40,7 +42,7 @@ class MealPlan extends Model
      */
     public function userSession()
     {
-        return $this->belongsTo(UserSession::class, 'session_id', 'session_id');
+        return $this->belongsTo(UserSession::class, 'session_id', 'id');
     }
 
     /**
@@ -71,6 +73,17 @@ class MealPlan extends Model
     }
 
     /**
+     * Scope for non-expired meal plans
+     */
+    public function scopeNotExpired($query)
+    {
+        return $query->where(function($q) {
+            $q->where('expires_at', '>', now())
+              ->orWhereNull('expires_at');
+        });
+    }
+
+    /**
      * Update the total calories for this meal plan
      */
     public function updateTotalCalories()
@@ -82,5 +95,13 @@ class MealPlan extends Model
         $this->update(['total_calories' => $totalCalories]);
         
         return $totalCalories;
+    }
+
+    /**
+     * Check if meal plan is expired
+     */
+    public function isExpired()
+    {
+        return $this->expires_at && $this->expires_at < now();
     }
 }

@@ -7,21 +7,21 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <!-- CSS Files -->    
-        <link rel="stylesheet" href="./css/variables.css">
-        <link rel="stylesheet" href="./css/animations.css">
-        <link rel="stylesheet" href="./css/layout.css">
-        <link rel="stylesheet" href="./css/header.css">
-        <link rel="stylesheet" href="./css/mood-tracker.css">
-        <link rel="stylesheet" href="./css/food-components.css">
-        <link rel="stylesheet" href="./css/recipes.css">
-        <link rel="stylesheet" href="./css/meal-planner.css">
-        <link rel="stylesheet" href="./css/charts.css">    
-        <link rel="stylesheet" href="./css/chatbot.css">
-        <link rel="stylesheet" href="./css/forms.css">
-        <link rel="stylesheet" href="./css/forms-feedback.css">
-        <link rel="stylesheet" href="./css/feedback-animations.css">
-        <link rel="stylesheet" href="./css/responsive.css">
-        <link rel="stylesheet" href="./css/custom-animations.css">
+    <link rel="stylesheet" href="{{ asset('css/variables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/animations.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/header.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/mood-tracker.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/food-components.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/recipes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/meal-planner.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/charts.css') }}">    
+    <link rel="stylesheet" href="{{ asset('css/chatbot.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/forms.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/forms-feedback.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/feedback-animations.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/custom-animations.css') }}">
     </head>
     <body>
         <div class="background-shapes">
@@ -361,13 +361,13 @@
             </div>
         </div>
         <!-- JavaScript Files -->
-        <script src="./js/app.js"></script>
-        <script src="./js/chatbot.js"></script>
-        <script src="./js/charts.js"></script>
-        <script src="./js/meal-planner.js"></script>
-        <script src="./js/feedback.js"></script>
-        <script>
-            // Session configuration
+            <script src="{{ asset('js/app.js') }}"></script>
+            <script src="{{ asset('js/chatbot.js') }}"></script>
+            <script src="{{ asset('js/charts.js') }}"></script>
+            <script src="{{ asset('js/meal-planner.js') }}"></script>
+            <script src="{{ asset('js/feedback.js') }}"></script>
+            <script>
+                // Session configuration
             window.MOOD_FOOD_CONFIG = {
                 sessionId: {{ $sessionId ?? 'null' }},
                 csrfToken: '{{ csrf_token() }}',
