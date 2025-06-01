@@ -1,9 +1,0 @@
-# Railway auto-detect alternative
-# Delete nixpacks.toml and let Railway auto-detect PHP Laravel app
-
-# Alternative minimal nixpacks.toml:
-[variables]
-PHP_VERSION = "8.2"
-
-[start]  
-cmd = 'php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT'
