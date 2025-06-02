@@ -20,36 +20,29 @@ class RecommendationsSeeder extends Seeder
             // Mood: Sedih (mood_id = 1)
             [
                 'mood_id' => 1,
-                'food_id' => 1, // Pisang
+                'food_id' => 1, // Tempe
                 'dietary_preference_id' => 2, // Vegan
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 1,
-                'food_id' => 2, // Ubi jalar
+                'food_id' => 2, // Pisang
                 'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 1,
-                'food_id' => 3, // Kacang mete
+                'food_id' => 5, // Ubi jalar
                 'dietary_preference_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 1,
-                'food_id' => 4, // Sup krim vegan
-                'dietary_preference_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'mood_id' => 1,
-                'food_id' => 5, // Banana bread vegan
-                'dietary_preference_id' => 5,
+                'food_id' => 10, // Madu
+                'dietary_preference_id' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -57,36 +50,29 @@ class RecommendationsSeeder extends Seeder
             // Mood: Marah (mood_id = 2)
             [
                 'mood_id' => 2,
-                'food_id' => 6, // Teh hijau
+                'food_id' => 8, // Teh hijau
                 'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 2,
-                'food_id' => 7, // Biji labu
+                'food_id' => 18, // Teh chamomile
                 'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 2,
-                'food_id' => 8, // Blueberry
-                'dietary_preference_id' => 1,
+                'food_id' => 7, // Coklat hitam
+                'dietary_preference_id' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 2,
-                'food_id' => 9, // Smoothie blueberry almond
+                'food_id' => 2, // Pisang
                 'dietary_preference_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'mood_id' => 2,
-                'food_id' => 10, // Energy ball kurma-kacang
-                'dietary_preference_id' => 6,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -94,36 +80,36 @@ class RecommendationsSeeder extends Seeder
             // Mood: Cemas (mood_id = 3)
             [
                 'mood_id' => 3,
-                'food_id' => 11, // Teh chamomile
+                'food_id' => 18, // Teh chamomile
                 'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 3,
-                'food_id' => 12, // Kenari
+                'food_id' => 19, // Kenari
                 'dietary_preference_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 3,
-                'food_id' => 13, // Coklat hitam
+                'food_id' => 7, // Coklat hitam
                 'dietary_preference_id' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 3,
-                'food_id' => 14, // Chia pudding coklat
-                'dietary_preference_id' => 6,
+                'food_id' => 23, // Biji chia
+                'dietary_preference_id' => 5,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 3,
-                'food_id' => 15, // Vegan trail mix
-                'dietary_preference_id' => 5,
+                'food_id' => 24, // Teh Lavender
+                'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -131,36 +117,36 @@ class RecommendationsSeeder extends Seeder
             // Mood: Bahagia (mood_id = 4)
             [
                 'mood_id' => 4,
-                'food_id' => 16, // Stroberi
+                'food_id' => 20, // Stroberi
                 'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 4,
-                'food_id' => 17, // Jeruk
+                'food_id' => 21, // Jeruk
                 'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 4,
-                'food_id' => 18, // Almond
+                'food_id' => 15, // Almond
                 'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 4,
-                'food_id' => 19, // Dessert coklat-berry
-                'dietary_preference_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'mood_id' => 4,
-                'food_id' => 20, // Salad buah saus kelapa
+                'food_id' => 6, // Jambu biji
                 'dietary_preference_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 4,
+                'food_id' => 25, // Lemon
+                'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -168,36 +154,36 @@ class RecommendationsSeeder extends Seeder
             // Mood: Lelah (mood_id = 5)
             [
                 'mood_id' => 5,
-                'food_id' => 18, // Almond
+                'food_id' => 15, // Almond
                 'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 5,
-                'food_id' => 21, // Kurma
+                'food_id' => 22, // Kurma
                 'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 5,
-                'food_id' => 22, // Bayam
+                'food_id' => 17, // Bayam
                 'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 5,
-                'food_id' => 23, // Protein shake vegan
-                'dietary_preference_id' => 2,
+                'food_id' => 12, // Telur ayam
+                'dietary_preference_id' => 4, // Contains eggs
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 5,
-                'food_id' => 24, // Sup bayam tofu
-                'dietary_preference_id' => 2,
+                'food_id' => 16, // Dada ayam
+                'dietary_preference_id' => 4, // Contains meat
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -205,42 +191,35 @@ class RecommendationsSeeder extends Seeder
             // Mood: Stres (mood_id = 6)
             [
                 'mood_id' => 6,
-                'food_id' => 25, // Oat bebas gluten
-                'dietary_preference_id' => 3,
+                'food_id' => 14, // Oat
+                'dietary_preference_id' => 3, // Gluten-free
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 6,
-                'food_id' => 26, // Biji chia
+                'food_id' => 23, // Biji chia
                 'dietary_preference_id' => 5,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 6,
-                'food_id' => 27, // Overnight oat
-                'dietary_preference_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'mood_id' => 6,
-                'food_id' => 28, // Granola bar vegan
-                'dietary_preference_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'mood_id' => 6,
-                'food_id' => 29, // Granola bar vegan
+                'food_id' => 24, // Teh Lavender
                 'dietary_preference_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'mood_id' => 6,
-                'food_id' => 30, // Granola bar vegan
+                'food_id' => 13, // Kacang-kacangan
+                'dietary_preference_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'mood_id' => 6,
+                'food_id' => 11, // Alpukat
                 'dietary_preference_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),

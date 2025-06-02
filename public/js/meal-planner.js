@@ -13,6 +13,24 @@ class MealPlanner {
         this.renderMealPlanner();
         this.addEventListeners();
         this.loadSuggestedMeals();
+        this.addDragDropVisualFeedback();
+        this.setupPlaceholders();
+    }
+    
+    setupPlaceholders() {
+        // Handle meal slot hover effects
+        document.querySelectorAll('.meal-slot').forEach(slot => {
+            // Ensure all slots have add-meal-placeholder if they're not filled
+            if (!slot.classList.contains('filled') && !slot.querySelector('.add-meal-placeholder')) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'add-meal-placeholder';
+                placeholder.innerHTML = `
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Tambah Makanan</span>
+                `;
+                slot.appendChild(placeholder);
+            }
+        });
     }
 
     getWeekDates() {
@@ -219,6 +237,11 @@ class MealPlanner {
         // Create modal for meal selection
         const modal = document.createElement('div');
         modal.className = 'meal-selector-modal';
+        
+        // Store meal slot info in data attributes
+        modal.dataset.day = mealSlot.dataset.day;
+        modal.dataset.mealType = mealSlot.dataset.meal;
+        
         modal.innerHTML = `
             <div class="modal-content">
                 <div class="modal-header">
@@ -335,14 +358,14 @@ class MealPlanner {
                 <input type="number" id="custom-meal-protein" placeholder="Protein (g)" step="0.1">
                 <input type="number" id="custom-meal-carbs" placeholder="Karbohidrat (g)" step="0.1">
                 <input type="number" id="custom-meal-fats" placeholder="Lemak (g)" step="0.1">
-                <button class="btn btn-primary" onclick="mealPlanner.addCustomMeal()">Tambah Makanan</button>
+                <button class="btn btn-primary" onclick="window.moodFoodApp.mealPlanner.addCustomMeal()">Tambah Makanan</button>
             </div>
         `;
     }
 
     getRecipesHTML() {
         // Get recipes from app if available
-        const recipes = window.app?.recipesData?.recipes || [];
+        const recipes = window.moodFoodApp?.recipesData?.recipes || [];
         
         if (recipes.length === 0) {
             return '<p>Belum ada resep tersedia. Silakan tambahkan resep di bagian Smart Recipes.</p>';
@@ -380,12 +403,34 @@ class MealPlanner {
 
         const meal = { name, calories, protein, carbs, fats, source: 'custom' };
         
-        // This would be handled by the modal click event
-        // For now, just close the modal and show notification
-        document.querySelector('.meal-selector-modal').remove();
+        // Get the active meal slot from the current modal
+        const modal = document.querySelector('.meal-selector-modal');
+        if (!modal) return;
         
-        if (window.app) {
-            window.app.showNotification(`Makanan custom "${name}" berhasil dibuat!`);
+        // Get data attributes from the modal
+        const mealSlotDay = modal.dataset.day;
+        const mealSlotType = modal.dataset.mealType;
+        
+        if (mealSlotDay && mealSlotType) {
+            // Add to meal plan
+            this.mealPlan[mealSlotDay][mealSlotType] = meal;
+            this.saveMealPlan();
+            this.renderMealPlanner();
+            this.updateNutritionSummary();
+            
+            // Close modal
+            modal.remove();
+            
+            if (window.moodFoodApp) {
+                window.moodFoodApp.showNotification(`Makanan custom "${name}" berhasil ditambahkan!`);
+            }
+        } else {
+            // Just close the modal and show notification
+            modal.remove();
+            
+            if (window.moodFoodApp) {
+                window.moodFoodApp.showNotification(`Makanan custom "${name}" berhasil dibuat!`);
+            }
         }
     }
 
@@ -734,97 +779,114 @@ async generateWeeklyPlan() {
         return 3;
     }
 
-    // Export meal plan
-    exportMealPlan() {
-        const data = {
-            mealPlan: this.mealPlan,
-            weekDates: this.currentWeek.map(day => day.date.toISOString()),
-            exportDate: new Date().toISOString()
-        };
+    // Method to add food to the first available slot or currently selected slot
+    addFoodToCurrentSlot(foodName) {
+        // Find food data from app if available
+        let food = null;
         
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `meal-plan-${new Date().toISOString().split('T')[0]}.json`;
-        a.click();
-        
-        URL.revokeObjectURL(url);
-    }
-
-    // Import meal plan
-    importMealPlan(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-        importMealPlan(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    this.mealPlan = data.mealPlan;
-                    this.saveMealPlan();
-                    this.renderMealPlanner();
-                    this.updateNutritionSummary();
-                    
-                    if (window.app) {
-                        window.app.showNotification('Meal plan berhasil diimpor!');
-                    }
-                } catch (error) {
-                    if (window.app) {
-                        window.app.showNotification('Gagal mengimpor meal plan. File tidak valid.', 'error');
+        if (window.moodFoodApp && window.moodFoodApp.moodData) {
+            // Search through mood data
+            for (const mood in window.moodFoodApp.moodData) {
+                const moodFoods = window.moodFoodApp.moodData[mood];
+                
+                if (moodFoods.natural) {
+                    const found = moodFoods.natural.find(f => f.name === foodName);
+                    if (found) {
+                        food = found;
+                        break;
                     }
                 }
+                
+                if (moodFoods.processed) {
+                    const found = moodFoods.processed.find(f => f.name === foodName);
+                    if (found) {
+                        food = found;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Create basic meal data if not found
+        if (!food) {
+            food = { 
+                name: foodName, 
+                calories: 200, 
+                protein: 5, 
+                carbs: 15, 
+                fats: 5
             };
-            reader.readAsText(file);
         }
+        
+        // Create meal object
+        const meal = {
+            name: food.name,
+            calories: food.calories || 0,
+            protein: food.protein || 0,
+            carbs: food.carbs || 0,
+            fats: food.fats || 0,
+            source: 'added'
+        };
+        
+        // Find today's slot that is empty
+        const today = new Date().toDateString();
+        
+        // If today is not in the current week, we can't add a meal
+        if (!this.mealPlan[today]) {
+            if (window.moodFoodApp) {
+                window.moodFoodApp.showNotification('Hari ini tidak ada dalam tampilan minggu ini. Silakan navigasi ke minggu saat ini.', 'warning');
+            }
+            return false;
+        }
+        
+        // Find first empty slot for today
+        let slotFound = false;
+        
+        for (const mealType of this.mealTypes) {
+            if (!this.mealPlan[today][mealType]) {
+                this.mealPlan[today][mealType] = meal;
+                slotFound = true;
+                break;
+            }
+        }
+        
+        if (!slotFound) {
+            if (window.moodFoodApp) {
+                window.moodFoodApp.showNotification('Semua slot makanan untuk hari ini sudah terisi. Hapus makanan terlebih dahulu.', 'warning');
+            }
+            return false;
+        }
+        
+        // Update the UI
+        this.saveMealPlan();
+        this.renderMealPlanner();
+        this.updateNutritionSummary();
+        
+        return true;
     }
-document.addEventListener('DOMContentLoaded', () => {
-    if (!window.mealPlanner && !window.moodFoodApp) {
-        window.mealPlanner = new MealPlanner();
-    }
-});
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = MealPlanner;
-}
-
-// Add drag and drop visual feedback
-document.addEventListener('DOMContentLoaded', function() {
-    // Add dragover class to meal slots when dragging
-    document.addEventListener('dragover', function(e) {
-        const mealSlot = e.target.closest('.meal-slot');
-        if (mealSlot) {
-            mealSlot.classList.add('drag-over');
-        }
-    });
-
-    // Remove dragover class when dragleave
-    document.addEventListener('dragleave', function(e) {
-        const mealSlot = e.target.closest('.meal-slot');
-        if (mealSlot) {
-            mealSlot.classList.remove('drag-over');
-        }
-    });
-
-    // Remove dragover class when drop
-    document.addEventListener('drop', function(e) {
-        document.querySelectorAll('.meal-slot.drag-over').forEach(slot => {
-            slot.classList.remove('drag-over');
+    // Add drag and drop visual feedback functionality within the class
+    addDragDropVisualFeedback() {
+        // Add dragover class to meal slots when dragging
+        document.addEventListener('dragover', (e) => {
+            const mealSlot = e.target.closest('.meal-slot');
+            if (mealSlot) {
+                mealSlot.classList.add('drag-over');
+            }
         });
-    });
 
-    // Handle meal slot hover effects
-    document.querySelectorAll('.meal-slot').forEach(slot => {
-        // Ensure all slots have add-meal-placeholder if they're not filled
-        if (!slot.classList.contains('filled') && !slot.querySelector('.add-meal-placeholder')) {
-            const placeholder = document.createElement('div');
-            placeholder.className = 'add-meal-placeholder';
-            placeholder.innerHTML = `
-                <i class="fas fa-plus-circle"></i>
-                <span>Tambah Makanan</span>
-            `;
-            slot.appendChild(placeholder);
-        }
-    });
-});
+        // Remove dragover class when dragleave
+        document.addEventListener('dragleave', (e) => {
+            const mealSlot = e.target.closest('.meal-slot');
+            if (mealSlot) {
+                mealSlot.classList.remove('drag-over');
+            }
+        });
+
+        // Remove dragover class when drop
+        document.addEventListener('drop', (e) => {
+            document.querySelectorAll('.meal-slot.drag-over').forEach(slot => {
+                slot.classList.remove('drag-over');
+            });
+        });
+    }};

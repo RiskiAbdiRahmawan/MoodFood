@@ -32,7 +32,8 @@ class DatabaseSeeder extends Seeder
             
             // Relationships and advanced data
             RecommendationsSeeder::class,
-            NutritionDataSeeder::class,
+            RecipeSeeder::class,
+            // NutritionDataSeeder::class, // Commented out - nutrition data now in foods table
             
             // User feedback and reviews
             FeedbackSeeder::class,
