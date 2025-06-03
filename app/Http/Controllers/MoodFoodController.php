@@ -458,17 +458,54 @@ class MoodFoodController extends Controller
                 ->get(),
             'feedback_summary' => [
                 'total' => Feedback::where('created_at', '>=', $startDate)->count(),
-                'average_rating' => Feedback::where('created_at', '>=', $startDate)
-                    ->whereNotNull('rating')
-                    ->avg('rating'),
-                'by_type' => Feedback::where('created_at', '>=', $startDate)
-                    ->selectRaw('type, COUNT(*) as count')
-                    ->groupBy('type')
-                    ->get()
+                'average_rating' => null, // Rating column doesn't exist in current feedback table
+                'by_type' => [] // Type column doesn't exist in current feedback table
             ]
         ];
 
         return response()->json($data);
+    }
+
+    /**
+     * Get foods by mood for frontend
+     */
+    public function getFoodsByMood($mood)
+    {
+        // Get foods with mood-related tags or benefits
+        $foods = \App\Models\FoodModel::with(['category'])
+            ->where('name', 'LIKE', '%pisang%')
+            ->orWhere('name', 'LIKE', '%coklat%')
+            ->orWhere('name', 'LIKE', '%alpukat%')
+            ->orWhere('name', 'LIKE', '%ubi%')
+            ->orWhere('name', 'LIKE', '%teh%')
+            ->orWhere('name', 'LIKE', '%madu%')
+            ->get()
+            ->map(function ($food) {
+                return [
+                    'id' => $food->id,
+                    'name' => $food->name,
+                    'category' => $food->category->name ?? 'Umum',
+                    'calories' => $food->calories ?? 0,
+                    'protein' => $food->protein ?? 0,
+                    'carbs' => $food->carbs ?? 0,
+                    'fats' => $food->fats ?? 0,
+                    'benefits' => $food->description ?? 'Makanan bergizi'
+                ];
+            });
+
+        // Group foods by natural/processed categories
+        $naturalFoods = $foods->filter(function ($food) {
+            return !str_contains(strtolower($food['name']), 'olahan');
+        })->values();
+
+        $processedFoods = $foods->filter(function ($food) {
+            return str_contains(strtolower($food['name']), 'olahan');
+        })->values();
+
+        return response()->json([
+            'natural' => $naturalFoods,
+            'processed' => $processedFoods
+        ]);
     }
 
     /**

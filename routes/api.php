@@ -25,6 +25,17 @@ Route::get('/analytics', [MoodFoodController::class, 'getAnalytics']);
 Route::get('/initialize-session', [MoodFoodController::class, 'initializeSession']);
 Route::get('/feedback', [FeedbackController::class, 'getFeedback']);
 
+// Recipe API routes
+Route::prefix('api/recipes')->group(function () {
+    Route::get('/', [MealPlanController::class, 'searchRecipes']);
+    Route::get('/by-mood/{mood}', [MealPlanController::class, 'getRecipesByMood']);
+});
+
+// Food API routes
+Route::prefix('api/foods')->group(function () {
+    Route::get('/by-mood/{mood}', [MoodFoodController::class, 'getFoodsByMood']);
+});
+
 // Meal Planner API routes
 Route::prefix('api/meal-plans')->group(function () {
     Route::get('/', [MealPlanController::class, 'index']);
@@ -34,4 +45,5 @@ Route::prefix('api/meal-plans')->group(function () {
     Route::delete('/{id}', [MealPlanController::class, 'destroy']);
     Route::get('/{id}/export', [MealPlanController::class, 'export']);
     Route::post('/', [MealPlanController::class, 'store']);
+    Route::get('/recipes', [MealPlanController::class, 'searchRecipes']);
 });

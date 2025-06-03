@@ -597,4 +597,41 @@ class MealPlanController extends Controller
 
         return response()->json(['export_data' => $exportData]);
     }
+
+    /**
+     * Get recipes by mood for frontend
+     */
+    public function getRecipesByMood($mood)
+    {
+        $recipes = Recipe::where('is_active', true)
+            ->byMood($mood)
+            ->select([
+                'id', 'name', 'description', 'category', 'difficulty',
+                'prep_time_minutes', 'cook_time_minutes', 'servings',
+                'calories_per_serving', 'protein_per_serving', 'carbs_per_serving', 'fats_per_serving',
+                'mood_tags', 'dietary_tags', 'ingredients', 'instructions', 'health_benefits'
+            ])
+            ->get()
+            ->map(function ($recipe) {
+                return [
+                    'id' => $recipe->id,
+                    'name' => $recipe->name,
+                    'description' => $recipe->description,
+                    'category' => $recipe->category,
+                    'difficulty' => $recipe->difficulty,
+                    'prepTime' => $recipe->formatted_prep_time,
+                    'servings' => $recipe->servings,
+                    'calories' => $recipe->calories_per_serving,
+                    'protein' => $recipe->protein_per_serving,
+                    'carbs' => $recipe->carbs_per_serving,
+                    'fats' => $recipe->fats_per_serving,
+                    'mood' => $recipe->mood_tags,
+                    'benefits' => $recipe->health_benefits,
+                    'ingredients' => $recipe->ingredients,
+                    'instructions' => $recipe->instructions
+                ];
+            });
+
+        return response()->json(['recipes' => $recipes]);
+    }
 }

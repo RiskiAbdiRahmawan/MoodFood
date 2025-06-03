@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="id">
     <head>
         <meta charset="UTF-8">
@@ -6,7 +6,7 @@
         <title>MoodFood Pro - AI-Powered Mood & Nutrition Assistant</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <!-- CSS Files -->    
+    <!-- CSS Files -->    
     <link rel="stylesheet" href="{{ asset('css/variables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/animations.css') }}">
     <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
@@ -14,12 +14,17 @@
     <link rel="stylesheet" href="{{ asset('css/mood-tracker.css') }}">
     <link rel="stylesheet" href="{{ asset('css/food-components.css') }}">
     <link rel="stylesheet" href="{{ asset('css/recipes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/recipes-fix.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/recipe-modals.css') }}">
     <link rel="stylesheet" href="{{ asset('css/meal-planner.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/meal-planner-fix.css') }}">
     <link rel="stylesheet" href="{{ asset('css/charts.css') }}">    
     <link rel="stylesheet" href="{{ asset('css/chatbot.css') }}">
     <link rel="stylesheet" href="{{ asset('css/forms.css') }}">
     <link rel="stylesheet" href="{{ asset('css/forms-feedback.css') }}">
     <link rel="stylesheet" href="{{ asset('css/feedback-animations.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tracking-enhancements.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/rekomendasi.css') }}">
     <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
     <link rel="stylesheet" href="{{ asset('css/custom-animations.css') }}">
     </head>
@@ -361,11 +366,14 @@
             </div>
         </div>
         <!-- JavaScript Files -->
-            <script src="{{ asset('js/app.js') }}"></script>
-            <script src="{{ asset('js/chatbot.js') }}"></script>
-            <script src="{{ asset('js/charts.js') }}"></script>
-            <script src="{{ asset('js/meal-planner.js') }}"></script>
-            <script src="{{ asset('js/feedback.js') }}"></script>
+        <script src="{{ asset('js/app.js') }}"></script>
+        <script src="{{ asset('js/charts.js') }}"></script>
+        <script src="{{ asset('js/meal-planner.js') }}"></script>
+        <script src="{{ asset('js/rekomendasi.js') }}"></script>
+        <script src="{{ asset('js/diagnostic.js') }}"></script>
+        <script src="{{ asset('js/education.js') }}"></script>
+        <script src="{{ asset('js/chatbot.js') }}"></script>
+        <script src="{{ asset('js/feedback.js') }}"></script>
             <script>
                 // Session configuration
             window.MOOD_FOOD_CONFIG = {

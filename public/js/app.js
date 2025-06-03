@@ -85,17 +85,50 @@ class MoodFoodApp {
 
     async loadData() {
         try {
-            // Load mood data
-            const moodResponse = await fetch('./data/mood-data.json');
-            this.moodData = await moodResponse.json();
+            // Prioritize server data over static files
+            await this.loadServerData();
             
-            // Load recipes data
-            const recipesResponse = await fetch('./data/recipes.json');
-            this.recipesData = await recipesResponse.json();
+            // If server data is incomplete, fallback to static files
+            if (!this.moodData || Object.keys(this.moodData).length === 0) {
+                const moodResponse = await fetch('./data/mood-data.json');
+                this.moodData = await moodResponse.json();
+            }
+            
+            if (!this.recipesData || !this.recipesData.recipes || this.recipesData.recipes.length === 0) {
+                const recipesResponse = await fetch('./data/recipes.json');
+                this.recipesData = await recipesResponse.json();
+            }
         } catch (error) {
             console.error('Error loading data files:', error);
             // Fallback to embedded data if files not found
             this.loadFallbackData();
+        }
+    }
+
+    async loadServerData() {
+        try {
+            // Load mood-based foods from server
+            if (this.currentMood || window.MOOD_FOOD_CONFIG?.selectedMood) {
+                const mood = this.currentMood || window.MOOD_FOOD_CONFIG.selectedMood;
+                const foodsResponse = await fetch(`${this.baseUrl}/api/foods/by-mood/${mood}`);
+                
+                if (foodsResponse.ok) {
+                    const foodsData = await foodsResponse.json();
+                    this.moodData = this.moodData || {};
+                    this.moodData[mood] = foodsData;
+                    console.log('Loaded server mood foods for:', mood);
+                }
+            }
+
+            // Load recipes from server
+            const recipesResponse = await fetch(`${this.baseUrl}/api/recipes/`);
+            if (recipesResponse.ok) {
+                const recipesData = await recipesResponse.json();
+                this.recipesData = { recipes: recipesData.recipes || [] };
+                console.log('Loaded server recipes:', recipesData.recipes?.length || 0);
+            }
+        } catch (error) {
+            console.warn('Server data not available, using fallback:', error);
         }
     }
 
@@ -261,6 +294,7 @@ class MoodFoodApp {
             }
         } else if (sectionId === 'recipes') {
             if (typeof this.generateSmartRecipes === 'function') {
+                // Async call to generate smart recipes with server data loading
                 this.generateSmartRecipes();
             } else {
                 console.error('generateSmartRecipes method not found');
@@ -360,7 +394,7 @@ class MoodFoodApp {
         }
     }
 
-    showRecommendations(mood) {
+    async showRecommendations(mood) {
         const recommendations = document.getElementById('recommendations');
         if (!recommendations) return;
 
@@ -372,6 +406,13 @@ class MoodFoodApp {
             selectedMoodSpan.textContent = mood.charAt(0).toUpperCase() + mood.slice(1);
         }
 
+        // Load fresh data from server when mood changes
+        try {
+            await this.loadRecommendationsFromServer(mood);
+        } catch (error) {
+            console.warn('Failed to load server recommendations, using cached data:', error);
+        }
+
         // Since recommendations are now server-rendered, just activate the existing elements
         // and attach event listeners to the food cards
         this.attachFoodCardEventListeners();
@@ -380,6 +421,92 @@ class MoodFoodApp {
         const data = this.moodData[mood];
         if (data) {
             console.log(`Loaded recommendations for mood: ${mood}`, data);
+        }
+    }
+
+    async loadRecommendationsFromServer(mood) {
+        if (!this.baseUrl) {
+            console.warn('Base URL not available for server requests');
+            return;
+        }
+
+        try {
+            // Show loading state
+            const loadingElement = document.getElementById('loading-recommendations');
+            const gridElement = document.getElementById('recommendations-grid');
+            if (loadingElement) loadingElement.classList.remove('hidden');
+            if (gridElement) gridElement.classList.add('hidden');
+
+            // Fetch mood-based foods and recipes from server
+            const [foodsResponse, recipesResponse] = await Promise.all([
+                fetch(`${this.baseUrl}/api/foods/by-mood/${mood}`),
+                fetch(`${this.baseUrl}/api/recipes/by-mood/${mood}`)
+            ]);
+
+            if (foodsResponse.ok && recipesResponse.ok) {
+                const foodsData = await foodsResponse.json();
+                const recipesData = await recipesResponse.json();
+
+                // Update local data with fresh server data
+                this.moodData[mood] = {
+                    foods: foodsData.foods || [],
+                    naturalFoods: foodsData.natural_foods || [],
+                    processedFoods: foodsData.processed_foods || []
+                };
+
+                if (recipesData.recipes) {
+                    this.recipesData.recipes = recipesData.recipes;
+                }
+
+                // Re-render recommendations with fresh data
+                this.renderMoodRecommendations(mood, foodsData, recipesData);
+                
+                this.showNotification(`Rekomendasi untuk mood "${mood}" berhasil dimuat dari server`, 'success');
+            } else {
+                throw new Error('Failed to fetch recommendations from server');
+            }
+        } catch (error) {
+            console.error('Error loading recommendations from server:', error);
+            this.showNotification('Menggunakan data lokal karena server tidak tersedia', 'warning');
+        } finally {
+            // Hide loading state
+            const loadingElement = document.getElementById('loading-recommendations');
+            if (loadingElement) loadingElement.classList.add('hidden');
+        }
+    }
+
+    renderMoodRecommendations(mood, foodsData, recipesData) {
+        const gridElement = document.getElementById('recommendations-grid');
+        if (!gridElement) return;
+
+        // Combine natural and processed foods
+        const allFoods = [
+            ...(foodsData.natural_foods || []),
+            ...(foodsData.processed_foods || [])
+        ];
+
+        // Create HTML for food recommendations
+        let html = '';
+        
+        if (allFoods.length > 0) {
+            html += allFoods.map(food => this.createFoodCard(food, 'natural')).join('');
+        }
+
+        // Add recipes if available
+        if (recipesData.recipes && recipesData.recipes.length > 0) {
+            html += recipesData.recipes.slice(0, 3).map(recipe => this.createRecipeCard(recipe)).join('');
+        }
+
+        if (html) {
+            gridElement.innerHTML = html;
+            gridElement.classList.remove('hidden');
+            
+            // Re-attach event listeners to new elements
+            this.attachFoodCardEventListeners();
+        } else {
+            // Show empty state
+            const emptyElement = document.getElementById('empty-recommendations');
+            if (emptyElement) emptyElement.classList.remove('hidden');
         }
     }
 
@@ -733,7 +860,7 @@ class MoodFoodApp {
         this.updateStars();
         const feedbackTextArea = document.getElementById('feedback-text');
         if (feedbackTextArea) feedbackTextArea.value = '';
-    }generateSmartRecipes() {
+    }    async generateSmartRecipes() {
         if (!this.currentMood) {
             this.showNotification('Pilih mood Anda terlebih dahulu untuk rekomendasi resep', 'warning');
             return;
@@ -745,6 +872,21 @@ class MoodFoodApp {
             return;
         }
 
+        // Show loading state
+        recipeContainer.innerHTML = `
+            <div class="loading-recipes">
+                <div class="loading-spinner"></div>
+                <p>Memuat resep pintar untuk mood "${this.currentMood}"...</p>
+            </div>
+        `;
+
+        try {
+            // Try to fetch fresh recipes from server first
+            await this.loadSmartRecipesFromServer(this.currentMood);
+        } catch (error) {
+            console.warn('Failed to load recipes from server, using cached data:', error);
+        }
+
         // Check if recipes data is available
         if (!this.recipesData || !this.recipesData.recipes) {
             console.error('Recipes data not loaded properly');
@@ -752,10 +894,13 @@ class MoodFoodApp {
             return;
         }
 
-        const moodRecipes = this.recipesData.recipes.filter(recipe => 
-            recipe.mood === this.currentMood ||
-            (recipe.tags && recipe.tags.includes(this.currentMood))
-        ) || [];
+        // Filter recipes by current mood
+        const moodRecipes = this.recipesData.recipes.filter(recipe => {
+            if (recipe.mood === this.currentMood) return true;
+            if (recipe.tags && recipe.tags.includes(this.currentMood)) return true;
+            if (recipe.mood_tags && recipe.mood_tags.includes(this.currentMood)) return true;
+            return false;
+        }) || [];
 
         // If no recipes match the exact mood, show some general recipes
         if (moodRecipes.length === 0) {
@@ -801,7 +946,56 @@ class MoodFoodApp {
                 card.classList.add('animated');
             });
         }, 100);
-    }    createRecipeCard(recipe) {
+    }
+
+    async loadSmartRecipesFromServer(mood) {
+        if (!this.baseUrl) {
+            console.warn('Base URL not available for server requests');
+            return;
+        }
+
+        try {
+            // Fetch mood-based recipes from server
+            const response = await fetch(`${this.baseUrl}/api/recipes/by-mood/${mood}`);
+            
+            if (response.ok) {
+                const recipesData = await response.json();
+                
+                // Update local recipes data with fresh server data
+                if (recipesData.recipes && recipesData.recipes.length > 0) {
+                    this.recipesData = { 
+                        recipes: recipesData.recipes.map(recipe => ({
+                            name: recipe.name,
+                            description: recipe.description,
+                            mood: recipe.mood || mood,
+                            mood_tags: recipe.mood_tags || [mood],
+                            difficulty: recipe.difficulty || 'mudah',
+                            prepTime: recipe.prepTime || `${recipe.prep_time_minutes || 15} menit`,
+                            servings: recipe.servings || 1,
+                            calories: recipe.calories || recipe.calories_per_serving || 0,
+                            protein: recipe.protein || recipe.protein_per_serving || 0,
+                            carbs: recipe.carbs || recipe.carbs_per_serving || 0,
+                            fats: recipe.fats || recipe.fats_per_serving || 0,
+                            benefits: recipe.benefits || recipe.description || 'Resep sehat dan bergizi',
+                            ingredients: recipe.ingredients || [],
+                            instructions: recipe.instructions || [],
+                            tags: recipe.tags || recipe.mood_tags || []
+                        }))
+                    };
+                    
+                    console.log(`Loaded ${recipesData.recipes.length} recipes from server for mood: ${mood}`);
+                    this.showNotification(`${recipesData.recipes.length} resep terbaru dimuat dari server`, 'success');
+                } else {
+                    console.warn('No recipes returned from server for mood:', mood);
+                }
+            } else {
+                throw new Error('Failed to fetch recipes from server');
+            }
+        } catch (error) {
+            console.error('Error loading recipes from server:', error);
+            this.showNotification('Menggunakan data resep lokal karena server tidak tersedia', 'warning');
+        }
+    }createRecipeCard(recipe) {
         // Make sure recipe has all required properties, or provide defaults
         const safeRecipe = {
             name: recipe.name || 'Unnamed Recipe',
@@ -956,20 +1150,32 @@ class MoodFoodApp {
         
         this.showNotification(`Menampilkan detail resep: ${recipeName}`);
     }    async updateCharts() {
-        // Try to load analytics data from server
-        const serverAnalytics = await this.loadAnalyticsData();
-        
-        if (serverAnalytics) {
-            // Use server data if available
-            this.updateChartsWithServerData(serverAnalytics);
-        } else {
-            // Fallback to local data
-            this.updateChartsWithLocalData();
+        // Initialize ChartsManager if not available
+        if (!window.ChartsManager) {
+            if (typeof initializeChartsManager === 'function') {
+                window.ChartsManager = initializeChartsManager();
+            }
         }
         
         // Update charts manager if available
         if (window.ChartsManager) {
-            window.ChartsManager.updateAllCharts();
+            await window.ChartsManager.refreshChartsWithServerData();
+        } else {
+            // Fallback to traditional method
+            console.log('ChartsManager not available, using fallback method');
+            
+            // Try to load analytics data from server
+            const serverAnalytics = await this.loadAnalyticsData();
+            
+            if (serverAnalytics) {
+                // Use server data if available
+                this.updateChartsWithServerData(serverAnalytics);
+                this.showNotification('Analytics updated with server data', 'success');
+            } else {
+                // Fallback to local data
+                this.updateChartsWithLocalData();
+                this.showNotification('Analytics updated with local data', 'info');
+            }
         }
     }
 

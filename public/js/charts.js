@@ -2,18 +2,50 @@
 class ChartsManager {
     constructor() {
         this.charts = {};
+        this.serverData = null;
         this.init();
     }
 
     init() {
         // Initialize charts when analytics section is first opened
-        this.createMoodTrendChart();
-        this.createNutritionChart();
-        this.createMoodDistributionChart();
-        this.createWeeklyProgressChart();
+        this.loadAnalyticsData().then(() => {
+            this.createMoodTrendChart();
+            this.createNutritionChart();
+            this.createMoodDistributionChart();
+            this.createWeeklyProgressChart();
+        });
+    }
+
+    async loadAnalyticsData() {
+        // Try to load data from server first
+        if (window.moodFoodApp && window.moodFoodApp.trackingEnabled) {
+            try {
+                this.serverData = await window.moodFoodApp.loadAnalyticsData();
+                if (this.serverData) {
+                    console.log('Analytics data loaded from server:', this.serverData);
+                    return;
+                }
+            } catch (error) {
+                console.warn('Failed to load server analytics data:', error);
+            }
+        }
+        
+        // Fallback to localStorage data
+        console.log('Using local analytics data as fallback');
+        this.serverData = null;
     }
 
     getMoodHistory() {
+        // Use server data if available, otherwise fallback to localStorage
+        if (this.serverData && this.serverData.mood_history) {
+            return this.serverData.mood_history.map(entry => ({
+                mood: entry.mood,
+                intensity: entry.intensity || 5,
+                timestamp: entry.created_at,
+                date: new Date(entry.created_at).toDateString()
+            }));
+        }
+        
         return JSON.parse(localStorage.getItem('moodHistory') || '[]');
     }
 
@@ -342,15 +374,77 @@ class ChartsManager {
     }
 
     calculateNutritionData() {
-        // Mock data based on typical daily intake
-        // In a real app, this would be calculated from actual food consumption
+        // Use server data if available
+        if (this.serverData && this.serverData.nutrition_summary) {
+            const nutrition = this.serverData.nutrition_summary;
+            return [
+                nutrition.protein || 65,
+                nutrition.carbs || 300, 
+                nutrition.fats || 50,
+                nutrition.fiber || 25,
+                nutrition.vitamins || 100
+            ];
+        }
+        
+        // Calculate from meal planner data if available
+        if (window.moodFoodApp && window.moodFoodApp.mealPlanner) {
+            const mealPlan = window.moodFoodApp.mealPlanner.mealPlan;
+            let totalProtein = 0, totalCarbs = 0, totalFats = 0;
+            let mealCount = 0;
+            
+            Object.values(mealPlan).forEach(dayMeals => {
+                Object.values(dayMeals).forEach(meal => {
+                    if (meal && meal.protein !== undefined) {
+                        totalProtein += meal.protein || 0;
+                        totalCarbs += meal.carbs || 0;
+                        totalFats += meal.fats || 0;
+                        mealCount++;
+                    }
+                });
+            });
+            
+            if (mealCount > 0) {
+                return [
+                    Math.round(totalProtein / 7), // Average per day
+                    Math.round(totalCarbs / 7),
+                    Math.round(totalFats / 7),
+                    25, // Estimated fiber
+                    100 // Estimated vitamins
+                ];
+            }
+        }
+        
+        // Mock data based on typical daily intake as fallback
         return [65, 300, 50, 25, 100]; // Protein, Carbs, Fat, Fiber, Vitamins
     }
 
     calculateMoodDistribution(moodHistory) {
+        // Use server data if available
+        if (this.serverData && this.serverData.popular_moods) {
+            const distribution = {
+                sedih: 0,
+                senang: 0,
+                bahagia: 0,
+                marah: 0,
+                cemas: 0,
+                stress: 0,
+                lelah: 0
+            };
+            
+            this.serverData.popular_moods.forEach(mood => {
+                if (distribution.hasOwnProperty(mood.mood)) {
+                    distribution[mood.mood] = mood.count;
+                }
+            });
+            
+            return distribution;
+        }
+        
+        // Fallback to local data calculation
         const distribution = {
             sedih: 0,
             senang: 0,
+            bahagia: 0,
             marah: 0,
             cemas: 0,
             stress: 0,
@@ -399,6 +493,20 @@ class ChartsManager {
         this.createNutritionChart();
         this.createMoodDistributionChart();
         this.createWeeklyProgressChart();
+    }
+
+    // Method to refresh charts with fresh server data
+    async refreshChartsWithServerData() {
+        await this.loadAnalyticsData();
+        this.updateAllCharts();
+        
+        if (window.moodFoodApp) {
+            if (this.serverData) {
+                window.moodFoodApp.showNotification('Charts updated with latest server data', 'success');
+            } else {
+                window.moodFoodApp.showNotification('Charts updated with local data', 'info');
+            }
+        }
     }
 
     // Method to export chart data
@@ -454,22 +562,15 @@ class ChartsManager {
     }
 }
 
-// Initialize charts manager only if not already initialized by main app
-document.addEventListener('DOMContentLoaded', () => {
-    if (!window.ChartsManager && !window.moodFoodApp) {
-        // Wait for Chart.js to load
-        if (typeof Chart !== 'undefined') {
-            window.ChartsManager = new ChartsManager();
-        } else {
-            // Retry after a short delay if Chart.js is not loaded yet
-            setTimeout(() => {
-                if (typeof Chart !== 'undefined') {
-                    window.ChartsManager = new ChartsManager();
-                }
-            }, 1000);
-        }
+// Initialize charts manager when explicitly requested by main app
+function initializeChartsManager() {
+    if (!window.ChartsManager && typeof Chart !== 'undefined') {
+        window.ChartsManager = new ChartsManager();
+        console.log('ChartsManager initialized by main app');
+        return window.ChartsManager;
     }
-});
+    return window.ChartsManager;
+}
 
 // Handle window resize for chart responsiveness
 window.addEventListener('resize', () => {

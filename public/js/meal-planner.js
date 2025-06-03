@@ -536,26 +536,64 @@ async generateWeeklyPlan() {
                 window.moodFoodApp.showNotification('Generating smart meal plan...', 'info');
             }
 
-            // Use fallback data if external files not available
+            // Try to use server APIs first, then fallback to static data
             let moodData, recipes;
+            const baseUrl = window.moodFoodApp?.baseUrl || '';
+            const currentMood = window.moodFoodApp ? window.moodFoodApp.currentMood : 'bahagia';
             
             try {
-                const [moodDataResponse, recipesResponse] = await Promise.all([
-                    fetch('./data/mood-data.json'),
-                    fetch('./data/recipes.json')
-                ]);
-                
-                moodData = await moodDataResponse.json();
-                recipes = await recipesResponse.json();
+                if (baseUrl) {
+                    // Fetch from server APIs
+                    const [moodDataResponse, recipesResponse] = await Promise.all([
+                        fetch(`${baseUrl}/api/foods/by-mood/${currentMood}`),
+                        fetch(`${baseUrl}/api/recipes/by-mood/${currentMood}`)
+                    ]);
+
+                    if (moodDataResponse.ok && recipesResponse.ok) {
+                        const moodResult = await moodDataResponse.json();
+                        const recipesResult = await recipesResponse.json();
+                        
+                        // Transform server data to expected format
+                        moodData = {
+                            [currentMood]: {
+                                natural: moodResult.natural_foods || [],
+                                processed: moodResult.processed_foods || [],
+                                foods: [...(moodResult.natural_foods || []), ...(moodResult.processed_foods || [])]
+                            }
+                        };
+                        
+                        recipes = {
+                            recipes: recipesResult.recipes || []
+                        };
+                        
+                        console.log('Successfully loaded meal planning data from server');
+                    } else {
+                        throw new Error('Server APIs not available');
+                    }
+                } else {
+                    throw new Error('Base URL not available');
+                }
             } catch (error) {
-                console.log('Using fallback data for meal planning');
-                // Use fallback data
-                moodData = this.getFallbackMoodData();
-                recipes = this.getFallbackRecipes();
+                console.log('Server APIs not available, trying static files...');
+                
+                try {
+                    // Fallback to static files
+                    const [moodDataResponse, recipesResponse] = await Promise.all([
+                        fetch('./data/mood-data.json'),
+                        fetch('./data/recipes.json')
+                    ]);
+                    
+                    moodData = await moodDataResponse.json();
+                    recipes = await recipesResponse.json();
+                } catch (fileError) {
+                    console.log('Static files not available, using fallback data');
+                    // Use fallback data
+                    moodData = this.getFallbackMoodData();
+                    recipes = this.getFallbackRecipes();
+                }
             }
             
-            // Get user's current mood and preferences from main app
-            const currentMood = window.moodFoodApp ? window.moodFoodApp.currentMood : 'bahagia';
+            // Get user's mood foods
             const moodFoods = moodData[currentMood] || moodData.bahagia || moodData.sedih;
             
             // Clear current meal plan
@@ -588,6 +626,9 @@ async generateWeeklyPlan() {
                 });
             });
             
+            // Try to save to server if available
+            await this.saveMealPlanToServer();
+            
             // Save and render the new plan
             this.saveMealPlan();
             this.renderMealPlanner();
@@ -603,6 +644,65 @@ async generateWeeklyPlan() {
                 window.moodFoodApp.showNotification('Error generating meal plan. Please try again.', 'error');
             }
         }
+    }
+
+    async saveMealPlanToServer() {
+        const baseUrl = window.moodFoodApp?.baseUrl || '';
+        const sessionId = window.moodFoodApp?.sessionId;
+        const csrfToken = window.moodFoodApp?.csrfToken;
+        
+        if (!baseUrl || !sessionId || !csrfToken) {
+            console.log('Server meal plan save not available');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${baseUrl}/api/meal-plans`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    start_date: this.currentWeek[0].date.toISOString().split('T')[0],
+                    end_date: this.currentWeek[6].date.toISOString().split('T')[0],
+                    meal_plan_data: this.mealPlan,
+                    target_calories: 2000, // Could be made configurable
+                    dietary_restrictions: window.moodFoodApp?.selectedPreferences || []
+                })
+            });
+
+            if (response.ok) {
+                console.log('Meal plan saved to server successfully');
+            }
+        } catch (error) {
+            console.warn('Failed to save meal plan to server:', error);
+        }
+    }
+
+    async loadMealPlanFromServer() {
+        const baseUrl = window.moodFoodApp?.baseUrl || '';
+        const sessionId = window.moodFoodApp?.sessionId;
+        
+        if (!baseUrl || !sessionId) {
+            return null;
+        }
+
+        try {
+            const startDate = this.currentWeek[0].date.toISOString().split('T')[0];
+            const response = await fetch(`${baseUrl}/api/meal-plans/recipes?session_id=${sessionId}&start_date=${startDate}`);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Loaded meal plan from server:', data);
+                return data;
+            }
+        } catch (error) {
+            console.warn('Failed to load meal plan from server:', error);
+        }
+        
+        return null;
     }
 
     getFallbackMoodData() {
