@@ -61,8 +61,9 @@
                             <i class="fas fa-dizzy mood-icon-large text-orange-300 text-3xl mb-2"></i>
                         </div>
                         <p class="font-semibold text-lg">Cemas</p>
-                        <p class="text-sm text-green-100 opacity-75 mt-1">Tenangkan pikiran</p>
-                    </div>                    <div onclick="selectMood('lelah')" 
+                        <p class="text-sm text-green-100 opacity-75 mt-1">Tarik napas dan rilek</p>
+                    </div>                    
+                    <div onclick="selectMood('lelah')" 
                          data-tooltip="Klik untuk melihat makanan yang mengembalikan energi"
                          class="mood-card glass-effect cursor-pointer text-white p-6 rounded-xl hover:scale-105 transition duration-300 backdrop-blur-sm text-center progressive-load animate-child">
                         <div class="mood-icon-wrapper">
@@ -70,6 +71,15 @@
                         </div>
                         <p class="font-semibold text-lg">Lelah</p>
                         <p class="text-sm text-green-100 opacity-75 mt-1">Kembalikan energi</p>
+                    </div>
+                    <div onclick="selectMood('stress')" 
+                         data-tooltip="Klik untuk melihat makanan yang mengembalikan energi"
+                         class="mood-card glass-effect cursor-pointer text-white p-6 rounded-xl hover:scale-105 transition duration-300 backdrop-blur-sm text-center progressive-load animate-child">
+                        <div class="mood-icon-wrapper">
+                            <i class="fas fa-tired mood-icon-large text-purple-300 text-3xl mb-2"></i>
+                        </div>
+                        <p class="font-semibold text-lg">Stress</p>
+                        <p class="text-sm text-green-100 opacity-75 mt-1">Tenangkan Pikiran</p>
                     </div>
                 </div>
                   <div class="flex justify-center gap-4">
