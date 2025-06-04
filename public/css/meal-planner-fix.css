@@ -453,7 +453,7 @@
    RESPONSIVE BREAKPOINTS 
    ======================================================= */
 
-@media (max-width: 1200px) {
+@media (max-width: 100vw) {
     .meal-planner,
     .week-grid {
         grid-template-columns: 160px repeat(7, minmax(140px, 1fr)) !important;
