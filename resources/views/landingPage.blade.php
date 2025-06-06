@@ -75,7 +75,7 @@
                 Tentang <span class="text-gradient">MoodFood</span>
             </h2>
             <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Kenali bagaimana makanan bisa memengaruhi suasana hatimu dan rasakan perbedaannya dalam hidup sehari-hari
+                Apakah kamu pernah merasa ingin makan cokelat saat sedang sedih? Atau ingin makanan pedas saat stres? Itu bukan kebetulan.
             </p>
         </div>
 
@@ -88,49 +88,64 @@
             </div>
             <div class="w-full lg:w-1/2 space-y-8" data-aos="fade-left" data-aos-duration="800">
                 <h3 class="text-3xl md:text-5xl font-bold text-gray-800 leading-tight">
-                    Makanan Bukan Cuma Soal <span class="text-gradient">Lapar</span>, Tapi Juga <span class="text-gradient">Perasaan</span>.
+                    Makan tidak hanya soal <span class="text-gradient">Kenyang</span>, tapi juga tentang merasa lebih baik, lebih tenang, dan lebih <span class="text-gradient">Bahagia</span>.
                 </h3>
                 <div class="space-y-6 text-gray-600 text-lg leading-relaxed">
-                    <p>Kami percaya bahwa apa yang kamu makan bisa memengaruhi bagaimana kamu merasa. Aplikasi ini hadir untuk membantu kamu memilih makanan berdasarkan suasana hati—baik saat sedang sedih, cemas, marah, bahagia, atau bahkan lelah.</p>
-                    <p>Dengan dukungan ilmu gizi dan riset tentang hormon seperti serotonin, dopamin, dan kortisol, kami ingin menjadikan momen makan sebagai cara alami untuk memperbaiki mood kamu.</p>
+                    <p>Food Mood adalah konsep yang menghubungkan apa yang kamu makan dengan suasana hatimu. Berbagai penelitian menunjukkan bahwa makanan memiliki peran besar dalam mengatur hormon seperti serotonin, dopamin, dan kortisol—yang semuanya memengaruhi perasaanmu setiap hari.</p>
                 </div>
                 <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-2xl border border-green-100">
                     <p class="text-gray-700 font-semibold mb-4 text-lg">Apa yang bisa kamu lakukan di sini?</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Pilih mood kamu secara manual</span>
+                      <!-- Item -->
+                      <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0">
+                          <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Dapatkan rekomendasi makanan alami & olahan</span>
+                        <span class="text-gray-700 font-medium">Pilih mood kamu secara manual</span>
+                      </div>
+                  
+                      <!-- Item -->
+                      <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0">
+                          <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Pelajari manfaat gizi yang mendukung keseimbangan emosi</span>
+                        <span class="text-gray-700 font-medium">Dapatkan rekomendasi makanan alami & olahan</span>
+                      </div>
+                  
+                      <!-- Item -->
+                      <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0">
+                          <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 font-medium">Berikan feedback dan bantu kami jadi lebih baik</span>
+                        <span class="text-gray-700 font-medium">Pelajari manfaat gizi yang mendukung keseimbangan emosi</span>
+                      </div>
+                  
+                      <!-- Item -->
+                      <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0">
+                          <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
                         </div>
+                        <span class="text-gray-700 font-medium">Berikan feedback dan bantu kami jadi lebih baik</span>
+                      </div>
                     </div>
-                </div>
+                  </div>
+                  
             </div>
         </div>
     </div>
@@ -223,12 +238,14 @@
             <!-- Konten teks -->
             <div class="w-full lg:w-1/2 order-1 lg:order-2" data-aos="fade-left" data-aos-duration="800">
                 <h2 class="text-4xl md:text-6xl font-bold text-gray-800 mb-8 leading-tight">
-                    Rekomendasi Makanan Sesuai <span class="text-gradient">Mood Kamu</span>
+                    Food <span class="text-gradient">Mood</span>
                 </h2>
                 <p class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
-                    Setelah kamu memilih mood, sistem AI kami akan menganalisis dan menampilkan rekomendasi yang tepat:
+                    Hadir sebagai teman pintar yang membantumu memilih makanan sesuai dengan mood-mu saat ini. Cukup pilih suasana hati yang kamu rasakan, dan kami akan memberikan saran bahan makanan, makanan olahan, hingga kandungan gizi yang bermanfaat untuk menyeimbangkan emosi dan menjaga kesehatan mentalmu.
                 </p>
-                <div class="space-y-6 mb-10">
+                <p class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+                    Yuk, jelajahi dan temukan makanan yang bisa mengangkat suasana hatimu hari ini!</p>
+                {{-- <div class="space-y-6 mb-10">
                     <div class="flex items-start group" data-aos="fade-up" data-aos-delay="100">
                         <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-400 to-green-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -264,9 +281,9 @@
                             <p class="text-gray-600">Penjelasan ilmiah tentang manfaat gizi dan bagaimana makanan tersebut dapat mempengaruhi keseimbangan emosi kamu.</p>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <a href="/rekomendasi" class="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl" data-aos="fade-up" data-aos-delay="400">
-                    <span>Lihat Rekomendasi Sekarang</span>
+                    <span>Yuk, Jelajahi Sekarang!</span>
                     <svg class="ml-2 w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                     </svg>
