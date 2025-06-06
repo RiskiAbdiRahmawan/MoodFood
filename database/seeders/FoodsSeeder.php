@@ -215,7 +215,7 @@ class FoodsSeeder extends Seeder
                 'image_url' => null
             ],
 
-            // Legacy items (keeping some existing ones)
+            // Legacy natural items (keeping some existing ones)
             ['name' => 'Teh chamomile', 'category_id' => $naturalCategory->id, 'description' => 'Teh herbal untuk relaksasi dan tidur', 'image_url' => null],
             ['name' => 'Kenari', 'category_id' => $naturalCategory->id, 'description' => 'Mengandung asam lemak omega-3 untuk menenangkan', 'image_url' => null],
             ['name' => 'Stroberi', 'category_id' => $naturalCategory->id, 'description' => 'Vitamin C tinggi, menyegarkan dan meningkatkan mood', 'image_url' => null],
@@ -223,7 +223,152 @@ class FoodsSeeder extends Seeder
             ['name' => 'Kurma', 'category_id' => $naturalCategory->id, 'description' => 'Sumber energi cepat dari gula alami', 'image_url' => null],
             ['name' => 'Biji chia', 'category_id' => $naturalCategory->id, 'description' => 'Sumber omega-3 dan serat', 'image_url' => null],
             ['name' => 'Teh Lavender', 'category_id' => $naturalCategory->id, 'description' => 'Mengandung senyawa aktif seperti linalool, linalyl acetate, dan flavonoid', 'image_url' => null],
-            ['name' => 'Lemon', 'category_id' => $naturalCategory->id, 'description' => 'Kaya vitamin C yang dapat membantu menurunkan kadar kortisol (hormon stres) dan meningkatkan daya tahan tubuh', 'image_url' => null]
+            ['name' => 'Lemon', 'category_id' => $naturalCategory->id, 'description' => 'Kaya vitamin C yang dapat membantu menurunkan kadar kortisol (hormon stres) dan meningkatkan daya tahan tubuh', 'image_url' => null],
+
+            // PROCESSED FOODS (Makanan Olahan)
+            // Mood: Sedih
+            [
+                'name' => 'Susu UHT coklat', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Kombinasi kalsium dan coklat yang dapat meningkatkan mood dan memberikan rasa nyaman',
+                'calories_per_100g' => 80,
+                'protein_per_100g' => 3.2,
+                'fats_per_100g' => 3.5,
+                'carbs_per_100g' => 9.5,
+                'mood_tags' => json_encode(['sedih', 'stress']),
+                'image_url' => null
+            ],
+            [
+                'name' => 'Biskuit gandum', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Karbohidrat kompleks yang membantu menstabilkan mood dengan pelepasan serotonin',
+                'calories_per_100g' => 435,
+                'protein_per_100g' => 10.7,
+                'fats_per_100g' => 14.9,
+                'carbs_per_100g' => 66.6,
+                'mood_tags' => json_encode(['sedih', 'lelah']),
+                'image_url' => null
+            ],
+
+            // Mood: Marah
+            [
+                'name' => 'Es krim vanilla', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Memberikan efek menenangkan dan membantu menurunkan tingkat stres melalui rasa manis',
+                'calories_per_100g' => 207,
+                'protein_per_100g' => 3.5,
+                'fats_per_100g' => 11,
+                'carbs_per_100g' => 23.6,
+                'mood_tags' => json_encode(['marah', 'stress']),
+                'image_url' => null
+            ],
+            [
+                'name' => 'Smoothie buah kemasan', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Minuman buah praktis yang kaya vitamin dan memberikan efek menyegarkan',
+                'calories_per_100g' => 54,
+                'protein_per_100g' => 0.4,
+                'fats_per_100g' => 0.2,
+                'carbs_per_100g' => 13.3,
+                'mood_tags' => json_encode(['marah', 'bahagia']),
+                'image_url' => null
+            ],
+
+            // Mood: Cemas
+            [
+                'name' => 'Teh herbal kemasan', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Teh herbal siap minum dengan kandungan chamomile atau lavender untuk relaksasi',
+                'calories_per_100g' => 1,
+                'protein_per_100g' => 0,
+                'fats_per_100g' => 0,
+                'carbs_per_100g' => 0.2,
+                'mood_tags' => json_encode(['cemas', 'stress']),
+                'image_url' => null
+            ],
+            [
+                'name' => 'Roti gandum utuh', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Sumber karbohidrat kompleks yang membantu menstabilkan kadar gula darah dan mood',
+                'calories_per_100g' => 247,
+                'protein_per_100g' => 13,
+                'fats_per_100g' => 4.2,
+                'carbs_per_100g' => 41,
+                'mood_tags' => json_encode(['cemas', 'lelah']),
+                'image_url' => null
+            ],
+
+            // Mood: Bahagia
+            [
+                'name' => 'Coklat susu batangan', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Merangsang pelepasan endorfin dan serotonin yang meningkatkan perasaan bahagia',
+                'calories_per_100g' => 535,
+                'protein_per_100g' => 7.3,
+                'fats_per_100g' => 29.7,
+                'carbs_per_100g' => 59.4,
+                'mood_tags' => json_encode(['bahagia', 'stress']),
+                'image_url' => null
+            ],
+            [
+                'name' => 'Yogurt cup dengan buah', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Kombinasi probiotik dan vitamin dari buah yang mendukung kesehatan pencernaan dan mood',
+                'calories_per_100g' => 89,
+                'protein_per_100g' => 4.3,
+                'fats_per_100g' => 3.3,
+                'carbs_per_100g' => 11.9,
+                'mood_tags' => json_encode(['bahagia', 'sedih']),
+                'image_url' => null
+            ],
+
+            // Mood: Lelah
+            [
+                'name' => 'Energy bar protein', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Camilan tinggi protein dan karbohidrat untuk mengembalikan energi dengan cepat',
+                'calories_per_100g' => 400,
+                'protein_per_100g' => 20,
+                'fats_per_100g' => 15,
+                'carbs_per_100g' => 45,
+                'mood_tags' => json_encode(['lelah', 'stress']),
+                'image_url' => null
+            ],
+            [
+                'name' => 'Jus jeruk kemasan', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Sumber vitamin C dan gula alami yang memberikan energi instan',
+                'calories_per_100g' => 45,
+                'protein_per_100g' => 0.7,
+                'fats_per_100g' => 0.2,
+                'carbs_per_100g' => 10.4,
+                'mood_tags' => json_encode(['lelah', 'bahagia']),
+                'image_url' => null
+            ],
+
+            // Mood: Stress
+            [
+                'name' => 'Granola bar', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Camilan sereal dengan kacang dan buah kering yang memberikan energi berkelanjutan',
+                'calories_per_100g' => 471,
+                'protein_per_100g' => 10.1,
+                'fats_per_100g' => 19.8,
+                'carbs_per_100g' => 64.8,
+                'mood_tags' => json_encode(['stress', 'lelah']),
+                'image_url' => null
+            ],
+            [
+                'name' => 'Keju slice', 
+                'category_id' => $processedCategory->id, 
+                'description' => 'Sumber protein dan kalsium yang dapat membantu meredakan stres',
+                'calories_per_100g' => 336,
+                'protein_per_100g' => 22.2,
+                'fats_per_100g' => 27.4,
+                'carbs_per_100g' => 2.2,
+                'mood_tags' => json_encode(['stress', 'cemas']),
+                'image_url' => null
+            ]
         ];
 
         foreach ($foods as $food) {

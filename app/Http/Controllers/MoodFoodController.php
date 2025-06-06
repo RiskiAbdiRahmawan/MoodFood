@@ -78,7 +78,7 @@ class MoodFoodController extends Controller
         }
 
         // Tampilkan view dengan data dan session info
-        return view('mood-food', [
+        return view('mood-food-legacy', [
             'dietaryPreferences' => $dietaryPreferences,
             'selectedMood' => $mood,
             'selectedDietaryPreference' => $dietPref,
@@ -95,6 +95,92 @@ class MoodFoodController extends Controller
                 'last_activity' => $session->last_activity_at,
                 'preferences' => $session->preferences ?? []
             ]
+        ]);
+    }
+
+    /**
+     * Display the MoodFood Tailwind Pro page
+     */
+    public function moodFoodTailwind(Request $request)
+    {
+        // Initialize or update user session with improved persistence
+        $session = $this->initializeSession($request);
+        
+        $feedbacks = Feedback::latest()->limit(3)->get();
+        $moods = MoodModel::all();
+        $dietaryPreferences = DietaryPreferencesModel::all();
+
+        // Ambil mood dan preferensi diet dari query param
+        $moodName = $request->query('mood');
+        $dietPrefName = $request->query('dietary_preference');
+
+        $mood = null;
+        $dietPref = null;
+        $naturalFoods = collect();
+        $processedFoods = collect();
+        $weeklyMealPlan = null;
+        $analytics = null;
+
+        if ($moodName) {
+            $mood = MoodModel::where('name', $moodName)->first();
+
+            if ($mood) {
+                $dietPref = $dietPrefName ? DietaryPreferencesModel::where('name', $dietPrefName)->first() : null;
+
+                // Track mood selection
+                $this->trackMoodSelection($session, $mood, $request);
+
+                // Ambil rekomendasi berdasarkan mood & preferensi diet (jika ada)
+                $recommendationsQuery = $mood->recommendations()->with(['food.category', 'food.nutritionData']);
+
+                if ($dietPref) {
+                    $recommendationsQuery->where('dietary_preference_id', $dietPref->id);
+                }
+
+                $recommendations = $recommendationsQuery->get();
+
+                // Pisahkan natural foods dan processed foods
+                $naturalFoods = $recommendations->filter(function ($rec) {
+                    return $rec->food->category->name === 'Bahan Makanan Alami';
+                })->pluck('food');
+
+                $processedFoods = $recommendations->filter(function ($rec) {
+                    return $rec->food->category->name === 'Makanan Olahan';
+                })->pluck('food');
+
+                // Generate weekly meal plan if requested
+                $weeklyMealPlan = $this->generateWeeklyMealPlan($session, $mood);
+
+                // Get analytics data
+                $analytics = $this->getSessionAnalytics($session);
+
+                // Track food recommendations shown
+                $this->trackFoodRecommendations($session, $naturalFoods->merge($processedFoods));
+            }
+        }
+
+        // Prepare session info
+        $sessionInfo = [
+            'is_returning_visitor' => $session->total_visits > 1,
+            'total_visits' => $session->total_visits,
+            'meal_plans_count' => $session->mealPlans()->count() ?? 0,
+            'last_mood' => $session->preferences['last_mood'] ?? null,
+            'preferred_foods' => $session->preferences['preferred_foods'] ?? []
+        ];
+
+        // Tampilkan view dengan data dan session info
+        return view('mood-food-tailwind', [
+            'dietaryPreferences' => $dietaryPreferences,
+            'selectedMood' => $mood,
+            'selectedDietaryPreference' => $dietPref,
+            'naturalFoods' => $naturalFoods,
+            'processedFoods' => $processedFoods,
+            'moods' => $moods,
+            'sessionId' => $session->id,
+            'sessionToken' => $session->session_id,
+            'weeklyMealPlan' => $weeklyMealPlan,
+            'analytics' => $analytics,
+            'sessionInfo' => $sessionInfo
         ]);
     }
 
@@ -515,5 +601,206 @@ class MoodFoodController extends Controller
     {
         $dietaryPreferences = DietaryPreferencesModel::all();
         return view('mood-food', compact('dietaryPreferences'));
+    }
+
+    /**
+     * Handle meal plan operations
+     */
+    public function handleMealPlan(Request $request)
+    {
+        $request->validate([
+            'action' => 'required|in:generate,add_food,remove_food',
+            'session_id' => 'sometimes|exists:user_sessions,id'
+        ]);
+
+        $session = $this->initializeSession($request);
+
+        switch ($request->action) {
+            case 'generate':
+                $mood = MoodModel::where('name', $request->mood)->first();
+                if ($mood) {
+                    $this->generateWeeklyMealPlan($session, $mood, true);
+                    return back()->with('success', 'Meal plan berhasil dibuat!');
+                }
+                break;
+
+            case 'add_food':
+                $request->validate([
+                    'food_id' => 'required|exists:foods,id',
+                    'meal_type' => 'required|in:sarapan,makan_siang,makan_malam',
+                    'day_of_week' => 'required|integer|min:0|max:6'
+                ]);
+
+                $this->addFoodToMealPlan($session, $request->food_id, $request->meal_type, $request->day_of_week);
+                return back()->with('success', 'Makanan berhasil ditambahkan ke meal plan!');
+
+            case 'remove_food':
+                // Implementation for removing food from meal plan
+                break;
+        }
+
+        return back()->with('error', 'Aksi tidak valid');
+    }
+
+    /**
+     * Generate weekly meal plan based on mood and preferences
+     */
+    private function generateWeeklyMealPlan(UserSession $session, MoodModel $mood, $forceRegenerate = false)
+    {
+        // Check if we already have a meal plan for this session and mood
+        $existingPlan = $session->mealPlans()
+            ->where('mood_id', $mood->id)
+            ->where('created_at', '>=', now()->startOfWeek())
+            ->first();
+
+        if ($existingPlan && !$forceRegenerate) {
+            return $this->formatMealPlanForView($existingPlan);
+        }
+
+        // Create new meal plan
+        $mealPlan = \App\Models\MealPlan::create([
+            'session_id' => $session->id,
+            'mood_id' => $mood->id,
+            'week_start_date' => now()->startOfWeek(),
+            'name' => 'Meal Plan untuk mood ' . ucfirst($mood->name),
+            'description' => 'Meal plan otomatis berdasarkan mood ' . $mood->name,
+            'is_active' => true
+        ]);
+
+        // Get recommended foods for this mood
+        $recommendedFoods = $mood->recommendations()
+            ->with('food')
+            ->get()
+            ->pluck('food');
+
+        // Generate meals for each day of the week
+        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+        $mealTypes = ['sarapan', 'makan_siang', 'makan_malam'];
+
+        foreach ($days as $dayIndex => $dayName) {
+            foreach ($mealTypes as $mealType) {
+                // Select random food from recommendations
+                $randomFood = $recommendedFoods->random();
+                
+                \App\Models\MealPlanItem::create([
+                    'meal_plan_id' => $mealPlan->id,
+                    'day_of_week' => (int) $dayIndex,
+                    'meal_type' => $mealType,
+                    'food_id' => $randomFood->id,
+                    'portion_size' => '1 porsi',
+                    'notes' => 'Rekomendasi untuk mood ' . $mood->name
+                ]);
+            }
+        }
+
+        return $this->formatMealPlanForView($mealPlan);
+    }
+
+    /**
+     * Format meal plan for view display
+     */
+    private function formatMealPlanForView($mealPlan)
+    {
+        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+        $formattedPlan = [
+            'id' => $mealPlan->id,
+            'name' => $mealPlan->name,
+            'days' => []
+        ];
+
+        foreach ($days as $dayIndex => $dayName) {
+            $dayMeals = $mealPlan->items()
+                ->where('day_of_week', (int) $dayIndex)
+                ->with(['food', 'recipe'])
+                ->get()
+                ->keyBy('meal_type');
+
+            $formattedPlan['days'][] = [
+                'name' => $dayName,
+                'meals' => [
+                    'sarapan' => $dayMeals->get('sarapan'),
+                    'makan_siang' => $dayMeals->get('makan_siang'),
+                    'makan_malam' => $dayMeals->get('makan_malam')
+                ]
+            ];
+        }
+
+        return $formattedPlan;
+    }
+
+    /**
+     * Add food to meal plan
+     */
+    private function addFoodToMealPlan(UserSession $session, $foodId, $mealType, $dayOfWeek)
+    {
+        // Get or create current week's meal plan
+        $mealPlan = $session->mealPlans()
+            ->where('week_start_date', '>=', now()->startOfWeek())
+            ->where('is_active', true)
+            ->first();
+
+        if (!$mealPlan) {
+            $mealPlan = \App\Models\MealPlan::create([
+                'session_id' => $session->id,
+                'week_start_date' => now()->startOfWeek(),
+                'name' => 'Custom Meal Plan',
+                'description' => 'Meal plan kustom',
+                'is_active' => true
+            ]);
+        }
+
+        // Check if item already exists for this day/meal type
+        $existingItem = $mealPlan->items()
+            ->where('day_of_week', $dayOfWeek)
+            ->where('meal_type', $mealType)
+            ->first();
+
+        if ($existingItem) {
+            // Update existing item
+            $existingItem->update([
+                'food_id' => $foodId,
+                'updated_at' => now()
+            ]);
+        } else {
+            // Create new item
+            \App\Models\MealPlanItem::create([
+                'meal_plan_id' => $mealPlan->id,
+                'day_of_week' => $dayOfWeek,
+                'meal_type' => $mealType,
+                'food_id' => $foodId,
+                'portion_size' => '1 porsi'
+            ]);
+        }
+
+        return $mealPlan;
+    }
+
+    /**
+     * Get analytics data for session
+     */
+    private function getSessionAnalytics(UserSession $session)
+    {
+        $moodTrackings = MoodTracking::where('session_id', $session->id)->get();
+        $foodInteractions = FoodAnalytics::where('session_id', $session->id)->get();
+
+        return [
+            'activity_summary' => [
+                'total_interactions' => $foodInteractions->count(),
+                'unique_foods' => $foodInteractions->pluck('food_name')->unique()->count(),
+                'mood_changes' => $moodTrackings->count(),
+                'favorite_mood' => $moodTrackings->isNotEmpty() ? 
+                    $moodTrackings->groupBy('mood_id')->map(function($group) { 
+                        return $group->count(); 
+                    })->sortByDesc(function($value) { 
+                        return $value; 
+                    })->keys()->first() : null
+            ],
+            'food_preferences' => $foodInteractions->groupBy('food_name')->map(function($items) { 
+                return $items->count(); 
+            })->sortByDesc(function($value) { 
+                return $value; 
+            })->take(5),
+            'mood_history' => $moodTrackings->sortByDesc('created_at')->take(10)
+        ];
     }
 }

@@ -7,8 +7,10 @@ use App\Models\MealPlan;
 use App\Models\MealPlanItem;
 use App\Models\Recipe;
 use App\Models\Food;
+use App\Models\UserSession;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class MealPlanController extends Controller
 {
@@ -299,7 +301,7 @@ class MealPlanController extends Controller
         }
 
         $mood = $request->mood;
-        $days = $request->days;
+        $days = (int) $request->days; // Cast to integer to fix Carbon error
         $dietaryPreferences = $request->dietary_preferences ?? [];
         $targetCalories = $request->target_calories ?? 2000;
         $mealsPerDay = $request->meals_per_day ?? 3;
@@ -339,7 +341,7 @@ class MealPlanController extends Controller
         $caloriesPerMeal = $targetCalories / $mealsPerDay;
 
         for ($day = 0; $day < $days; $day++) {
-            $currentDate = Carbon::today()->addDays($day);
+            $currentDate = Carbon::today()->addDays((int) $day); // Cast to integer to fix Carbon error
             
             foreach ($mealTypes as $mealType) {
                 $recipeCategory = $mealTypeToCategory[$mealType];
@@ -454,7 +456,7 @@ class MealPlanController extends Controller
         $caloriesPerMeal = $targetCalories / $mealsPerDay;
 
         for ($day = 0; $day < $days; $day++) {
-            $currentDate = $startDate->copy()->addDays($day);
+            $currentDate = $startDate->copy()->addDays((int) $day); // Cast to integer to fix Carbon error
             
             foreach ($mealTypes as $mealType) {
                 $recipeCategory = $mealTypeToCategory[$mealType];
@@ -633,5 +635,130 @@ class MealPlanController extends Controller
             });
 
         return response()->json(['recipes' => $recipes]);
+    }
+
+    /**
+     * Add a food item to a meal plan
+     */
+    public function addFoodToMealPlan(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'session_id' => 'required|string',
+            'food_id' => 'required|integer|exists:foods,id',
+            'meal_type' => 'required|in:sarapan,makan_siang,makan_malam,snack1,snack2',
+            'day_of_week' => 'required|integer|min:0|max:6',
+            'serving_size' => 'nullable|numeric|min:0.1|max:10',
+            'meal_date' => 'nullable|date'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        try {
+            // Get or create user session
+            $session = UserSession::where('session_id', $request->session_id)->first();
+            if (!$session) {
+                $session = UserSession::create([
+                    'session_id' => $request->session_id,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent()
+                ]);
+            }
+
+            // Get or create meal plan for this week
+            $weekStart = now()->startOfWeek();
+            $weekEnd = now()->endOfWeek();
+            
+            $mealPlan = $session->mealPlans()
+                ->whereBetween('start_date', [$weekStart, $weekEnd])
+                ->orWhereBetween('end_date', [$weekStart, $weekEnd])
+                ->where('is_active', true)
+                ->first();
+
+            if (!$mealPlan) {
+                $mealPlan = MealPlan::create([
+                    'session_id' => $session->id,
+                    'name' => 'Weekly Meal Plan - ' . $weekStart->format('M d'),
+                    'start_date' => $weekStart,
+                    'end_date' => $weekEnd,
+                    'is_active' => true,
+                    'preferences' => [
+                        'auto_generated' => false,
+                        'created_via' => 'food_recommendation'
+                    ]
+                ]);
+            }
+
+            // Calculate meal date if not provided
+            $mealDate = $request->meal_date ? 
+                Carbon::parse($request->meal_date) : 
+                $weekStart->copy()->addDays((int) $request->day_of_week);
+
+            // Check if meal plan item already exists for this slot
+            $existingItem = $mealPlan->items()
+                ->where('meal_date', $mealDate->format('Y-m-d'))
+                ->where('meal_type', $request->meal_type)
+                ->first();
+
+            if ($existingItem) {
+                // Update existing item
+                $existingItem->update([
+                    'food_id' => $request->food_id,
+                    'serving_size' => $request->serving_size ?? 1,
+                    'notes' => 'Updated from food recommendation'
+                ]);
+                $mealPlanItem = $existingItem;
+            } else {
+                // Create new meal plan item
+                $mealPlanItem = MealPlanItem::create([
+                    'meal_plan_id' => $mealPlan->id,
+                    'meal_date' => $mealDate->format('Y-m-d'),
+                    'meal_type' => $request->meal_type,
+                    'food_id' => $request->food_id,
+                    'serving_size' => $request->serving_size ?? 1,
+                    'notes' => 'Added from food recommendation'
+                ]);
+            }
+
+            // Update meal plan total calories
+            $mealPlan->updateTotalCalories();
+
+            // Load the meal plan item with relationships
+            $mealPlanItem->load(['food.nutritionData', 'mealPlan']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Food added to meal plan successfully',
+                'meal_plan_item' => [
+                    'id' => $mealPlanItem->id,
+                    'meal_date' => $mealPlanItem->meal_date,
+                    'meal_type' => $mealPlanItem->meal_type,
+                    'serving_size' => $mealPlanItem->serving_size,
+                    'food' => [
+                        'id' => $mealPlanItem->food->id,
+                        'name' => $mealPlanItem->food->name,
+                        'calories' => $mealPlanItem->food->nutritionData->calories_per_100g ?? 0,
+                        'protein' => $mealPlanItem->food->nutritionData->protein_g ?? 0,
+                        'carbs' => $mealPlanItem->food->nutritionData->carbohydrates_g ?? 0,
+                        'fats' => $mealPlanItem->food->nutritionData->fat_g ?? 0
+                    ]
+                ],
+                'meal_plan' => [
+                    'id' => $mealPlan->id,
+                    'name' => $mealPlan->name,
+                    'total_calories' => $mealPlan->total_calories
+                ]
+            ], 201);
+
+        } catch (\Exception $e) {
+            Log::error('Error adding food to meal plan: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add food to meal plan',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -40,6 +40,7 @@ Route::prefix('api/foods')->group(function () {
 Route::prefix('api/meal-plans')->group(function () {
     Route::get('/', [MealPlanController::class, 'index']);
     Route::post('/generate-weekly', [MealPlanController::class, 'generateWeeklyPlan']);
+    Route::post('/add-food', [MealPlanController::class, 'addFoodToMealPlan']);
     Route::get('/{id}', [MealPlanController::class, 'show']);
     Route::put('/{id}', [MealPlanController::class, 'update']);
     Route::delete('/{id}', [MealPlanController::class, 'destroy']);
