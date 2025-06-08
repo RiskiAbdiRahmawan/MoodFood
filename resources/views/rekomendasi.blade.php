@@ -8,8 +8,6 @@
     @vite('resources/css/app.css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('css/education.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/food-components.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
     <!-- Rekomendasi page specific styles -->
     <link href="{{ asset('css/rekomendasi.css') }}" rel="stylesheet"></head>
 <body class="bg-gray-50">
@@ -427,7 +425,6 @@
 
     @include('components.footer')
 
-    <script src="{{ asset('js/app.js') }}"></script>
     <!-- Load detailed-recipes.js first since rekomendasi.js depends on it -->
     <script src="{{ asset('js/detailed-recipes.js') }}?v={{ time() }}"></script>
     <!-- Rekomendasi page specific JavaScript -->

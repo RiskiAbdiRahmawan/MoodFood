@@ -57,7 +57,6 @@ Route::post('/api/track-mood', [App\Http\Controllers\MoodFoodTailwindController:
 Route::post('/api/track-food', [App\Http\Controllers\MoodFoodTailwindController::class, 'trackFoodInteraction']);
 Route::post('/api/feedback', [App\Http\Controllers\MoodFoodTailwindController::class, 'submitFeedback']);
 
-// Legacy route (if needed)
-// Route::get('/mood-food-legacy', [MoodFoodController::class, 'getDietaryPreferences']);
+
 
 Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');

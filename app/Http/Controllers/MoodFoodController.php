@@ -594,14 +594,7 @@ class MoodFoodController extends Controller
         ]);
     }
 
-    /**
-     * Get dietary preferences (legacy method)
-     */
-    public function getDietaryPreferences()
-    {
-        $dietaryPreferences = DietaryPreferencesModel::all();
-        return view('mood-food', compact('dietaryPreferences'));
-    }
+
 
     /**
      * Handle meal plan operations
