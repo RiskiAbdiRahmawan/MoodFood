@@ -414,7 +414,7 @@
                     Gunakan pengetahuan ini untuk memilih makanan yang tepat sesuai mood kamu hari ini!
                 </p>
                 <div class="flex justify-center gap-4">
-                    <a href="{{ url('/mood-food') }}" class="bg-white text-green-700 px-8 py-4 rounded-full font-semibold hover:bg-green-50 transition duration-300 hover-scale inline-flex items-center">
+                    <a href="{{ url('/mood-food-tailwind') }}" class="bg-white text-green-700 px-8 py-4 rounded-full font-semibold hover:bg-green-50 transition duration-300 hover-scale inline-flex items-center">
                         <i class="fas fa-rocket mr-2"></i>
                         Mulai Mood Selection
                     </a>

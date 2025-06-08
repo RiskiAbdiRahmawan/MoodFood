@@ -123,20 +123,67 @@
     box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
+/* Recommendations Grid Layout */
+.recommendation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 1200px;
+    width: 100%;
+}
+
+/* Full-width elements in grid */
+.recommendation-grid .col-span-full {
+    grid-column: 1 / -1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+    .recommendation-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .recommendation-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1025px) {
+    .recommendation-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 /* Recommendation Cards seperti education card styling */
 .recommendation-card {
     background: white;
     border-radius: 20px;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(0, 0, 0, 0.05);
     cursor: pointer;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .recommendation-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    border-color: rgba(16, 185, 129, 0.3);
 }
 
 .recommendation-card .card-image {
@@ -188,13 +235,6 @@
 .difficulty-badge {
     background: #dbeafe;
     color: #1e40af;
-}
-
-/* Grid layout untuk recommendations */
-.recommendation-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
 }
 
 /* Custom styles untuk recommendations page */
@@ -404,10 +444,12 @@
 }
 
 .food-detail-modal .nutrition-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 1rem;
     margin: 1rem 0;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .food-detail-modal .nutrition-item {
@@ -416,256 +458,133 @@
     background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
     border-radius: 0.75rem;
     transition: transform 0.2s ease;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .food-detail-modal .nutrition-item:hover {
     transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .food-detail-modal .ingredients-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 0.5rem;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .food-detail-modal .ingredient-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: #f8fafc;
-    border-radius: 0.5rem;
-    transition: background-color 0.2s ease;
-}
-
-.food-detail-modal .ingredient-item:hover {
-    background: #e2e8f0;
-}
-
-/* Food Details Section - Education Style */
-#food-details {
-    background: white;
-    border-radius: 1.5rem;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(16, 185, 129, 0.1);
-    transition: all 0.5s ease;
-    animation: slideUp 0.5s ease-out;
-}
-
-#food-details.show {
-    display: block;
-    animation: slideUp 0.5s ease-out;
-}
-
-.food-details-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #f3f4f6;
-}
-
-.food-details-close {
-    background: #ef4444;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    font-size: 1.25rem;
-}
-
-.food-details-close:hover {
-    background: #dc2626;
-    transform: scale(1.1);
-}
-
-.food-image-large {
-    width: 100%;
-    height: 300px;
-    background: linear-gradient(135deg, #10b981, #065f46);
-    border-radius: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 2rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.food-image-large::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 100%);
-    opacity: 0.5;
-}
-
-.food-image-icon {
-    font-size: 4rem;
-    color: white;
-    z-index: 1;
-}
-
-.food-details-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.food-info-section {
-    background: #f8fafc;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    border-left: 4px solid #10b981;
-}
-
-.nutrition-stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.nutrition-stat {
-    text-align: center;
-    padding: 1rem;
-    background: white;
-    border-radius: 0.75rem;
-    border: 2px solid #e5e7eb;
-    transition: all 0.3s ease;
-}
-
-.nutrition-stat:hover {
-    border-color: #10b981;
-    transform: translateY(-2px);
-}
-
-.nutrition-number {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #10b981;
-}
-
-.benefits-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 0.75rem;
-    margin-top: 1rem;
-}
-
-.benefit-item {
-    display: flex;
+    display: flex !important;
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem;
-    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    background: #f8fafc;
     border-radius: 0.5rem;
-    border: 1px solid #10b981;
-    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
 }
 
-.benefit-item:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
-}
-
-.benefit-icon {
-    color: #10b981;
-    font-size: 1.25rem;
-}
-
-.ingredients-section {
-    grid-column: 1 / -1;
+.food-detail-modal .ingredient-item:hover {
     background: #f1f5f9;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    border-left: 4px solid #3b82f6;
+    transform: translateX(4px);
 }
 
-.ingredients-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+/* Nutrition Table Enhancements */
+.nutrition-table {
+    display: table !important;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.nutrition-table th,
+.nutrition-table td {
+    display: table-cell !important;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+}
+
+.nutrition-table th {
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    font-weight: 600;
+    color: #374151;
+}
+
+.nutrition-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+/* Force display for hidden elements */
+.food-details-nutrition,
+.food-details-ingredients,
+.food-details-steps {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.nutrition-details,
+.recipe-details,
+.food-content {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Enhanced Grid Display Utilities */
+.nutrition-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.nutrition-item {
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nutrition-item:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.ingredients-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 0.75rem;
-    margin-top: 1rem;
+    margin: 1rem 0;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .ingredient-item {
-    display: flex;
+    display: flex !important;
     align-items: center;
-    gap: 0.75rem;
-    padding: 1rem;
-    background: white;
-    border-radius: 0.75rem;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 0.5rem;
     border: 1px solid #e2e8f0;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .ingredient-item:hover {
-    border-color: #3b82f6;
-    transform: translateY(-2px);
-}
-
-.ingredient-icon {
-    color: #3b82f6;
-    font-size: 1.25rem;
-}
-
-.cooking-instructions {
-    grid-column: 1 / -1;
-    background: #fef7ff;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    border-left: 4px solid #a855f7;
-    margin-top: 1rem;
-}
-
-.instruction-steps {
-    counter-reset: step-counter;
-    margin-top: 1rem;
-}
-
-.instruction-step {
-    counter-increment: step-counter;
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: white;
-    border-radius: 0.75rem;
-    border: 1px solid #e2e8f0;
-    transition: all 0.3s ease;
-}
-
-.instruction-step:hover {
-    border-color: #a855f7;
-    transform: translateX(5px);
-}
-
-.instruction-step::before {
-    content: counter(step-counter);
-    background: #a855f7;
-    color: white;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 0.875rem;
-    flex-shrink: 0;
+    background: #f1f5f9;
+    transform: translateX(4px);
 }
 
 /* Animation untuk food details */
@@ -708,7 +627,41 @@
     }
 }
 
-/* Advanced hover effects */
+/* Recipe Section Visibility */
+#recipe-tabs-section {
+    transition: all 0.3s ease-in-out;
+    opacity: 1;
+    visibility: visible;
+}
+
+#recipe-tabs-section.hidden {
+    display: none !important;
+}
+
+#recipe-tabs-section:not(.hidden) {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Recipe Content Styling */
+#recipe-content {
+    min-height: 200px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.recipe-content {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Ensure recipe section is properly positioned */
+.w-full {
+    width: 100% !important;
+}
+
+/* Enhanced hover effects */
 .pulse-on-hover:hover {
     animation: pulse 1s infinite;
 }
@@ -817,4 +770,94 @@ html {
 .grid > *.fade-in-up {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Recipe Steps Styling */
+.food-details-steps {
+    margin-bottom: 2rem;
+}
+
+.food-details-steps .space-y-4 > * + * {
+    margin-top: 1rem;
+}
+
+.food-details-steps .flex {
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.food-details-steps .flex:hover {
+    background-color: #f3f4f6;
+    transform: translateX(4px);
+}
+
+.food-details-steps .flex-shrink-0 {
+    background-color: #10b981;
+    color: white;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.875rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.food-details-steps .text-gray-700 {
+    color: #374151;
+    line-height: 1.5;
+}
+
+/* Enhanced nutrition grid for detailed recipes */
+.nutrition-grid .nutrition-item {
+    text-align: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 0.75rem;
+    border: 2px solid #f3f4f6;
+    transition: all 0.3s ease;
+}
+
+.nutrition-grid .nutrition-item:hover {
+    border-color: #10b981;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+}
+
+/* Status indicators for detailed vs basic nutrition */
+.bg-blue-50 {
+    background-color: #eff6ff;
+}
+
+.border-blue-200 {
+    border-color: #bfdbfe;
+}
+
+.text-blue-700 {
+    color: #1d4ed8;
+}
+
+.text-blue-600 {
+    color: #2563eb;
+}
+
+.bg-yellow-50 {
+    background-color: #fffbeb;
+}
+
+.border-yellow-200 {
+    border-color: #fde68a;
+}
+
+.text-yellow-700 {
+    color: #a16207;
+}
+
+.text-yellow-600 {
+    color: #d97706;
 }
