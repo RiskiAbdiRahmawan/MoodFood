@@ -11,7 +11,7 @@ Route::get('/', [MoodFoodController::class, 'index'])->name('landing');
 Route::get('/mood-food', [MoodFoodController::class, 'moodFoodPro'])->name('mood-food');
 
 // Session management routes
-Route::prefix('api/session')->group(function () {
+Route::prefix('session')->group(function () {
     Route::get('/check', [MoodFoodController::class, 'checkSession']);
     Route::delete('/clear', [MoodFoodController::class, 'clearSession']);
     Route::get('/export-all', [MoodFoodController::class, 'exportAllData']);
@@ -26,21 +26,23 @@ Route::get('/initialize-session', [MoodFoodController::class, 'initializeSession
 Route::get('/feedback', [FeedbackController::class, 'getFeedback']);
 
 // Recipe API routes
-Route::prefix('api/recipes')->group(function () {
+Route::prefix('recipes')->group(function () {
     Route::get('/', [MealPlanController::class, 'searchRecipes']);
     Route::get('/by-mood/{mood}', [MealPlanController::class, 'getRecipesByMood']);
 });
 
 // Food API routes
-Route::prefix('api/foods')->group(function () {
+Route::prefix('foods')->group(function () {
     Route::get('/by-mood/{mood}', [MoodFoodController::class, 'getFoodsByMood']);
+    Route::get('/search', [MealPlanController::class, 'searchFoods']);
 });
 
 // Meal Planner API routes
-Route::prefix('api/meal-plans')->group(function () {
+Route::prefix('meal-plans')->group(function () {
     Route::get('/', [MealPlanController::class, 'index']);
     Route::post('/generate-weekly', [MealPlanController::class, 'generateWeeklyPlan']);
     Route::post('/add-food', [MealPlanController::class, 'addFoodToMealPlan']);
+    Route::delete('/remove-item/{itemId}', [MealPlanController::class, 'removeItem']);
     Route::get('/{id}', [MealPlanController::class, 'show']);
     Route::put('/{id}', [MealPlanController::class, 'update']);
     Route::delete('/{id}', [MealPlanController::class, 'destroy']);

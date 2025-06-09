@@ -154,8 +154,20 @@ class MoodFoodTailwindController extends Controller
                 return back()->with('success', 'Makanan berhasil ditambahkan ke meal plan!');
 
             case 'remove_food':
-                // Implementation for removing food from meal plan
-                break;
+                $request->validate([
+                    'meal_id' => 'required|exists:meal_plan_items,id',
+                ]);
+
+                $this->removeFoodFromMealPlan($session, $request->meal_id);
+                
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Makanan berhasil dihapus dari meal plan!'
+                    ]);
+                }
+                
+                return back()->with('success', 'Makanan berhasil dihapus dari meal plan!');
         }
 
         if ($request->expectsJson()) {
@@ -362,6 +374,30 @@ class MoodFoodTailwindController extends Controller
                 'serving_size' => 1.0
             ]);
         }
+
+        return $mealPlan;
+    }
+
+    /**
+     * Remove food from meal plan
+     */
+    private function removeFoodFromMealPlan(UserSession $session, $mealPlanItemId)
+    {
+        $mealPlanItem = \App\Models\MealPlanItem::where('id', $mealPlanItemId)
+            ->whereHas('mealPlan', function($query) use ($session) {
+                $query->where('session_id', $session->id);
+            })
+            ->first();
+
+        if (!$mealPlanItem) {
+            throw new \Exception('Meal plan item not found or unauthorized');
+        }
+
+        $mealPlan = $mealPlanItem->mealPlan;
+        $mealPlanItem->delete();
+
+        // Update total calories
+        $mealPlan->updateTotalCalories();
 
         return $mealPlan;
     }/**

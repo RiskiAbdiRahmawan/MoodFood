@@ -543,9 +543,42 @@
                 </p>
             </div>
 
-            {{-- rencana makan mingguan --}}
+            <!-- Generate Meal Plan Section -->
+            @if(!$weeklyMealPlan)
+            <div class="bg-white/95 rounded-3xl shadow-2xl p-8 mb-8 text-center">
+                <div class="mb-6">
+                    <i class="fas fa-calendar-plus text-6xl text-purple-500 mb-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">
+                        Buat Rencana Makan Mingguan
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        @if(isset($selectedMood))
+                            Buat rencana makan selama seminggu berdasarkan mood <strong>{{ $selectedMood->name }}</strong> Anda!
+                        @else
+                            Pilih mood terlebih dahulu untuk mendapatkan rekomendasi meal plan yang tepat.
+                        @endif
+                    </p>
+                    @if(isset($selectedMood))
+                    <button 
+                        id="generate-meal-plan-btn"
+                        onclick="generateMealPlan()" 
+                        class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                    >
+                        <i class="fas fa-magic mr-2"></i>
+                        Generate Meal Plan
+                    </button>
+                    @else
+                    <a href="#mood-tracker-section" onclick="showSection('mood-tracker')" 
+                       class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-8 py-3 rounded-full hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-smile mr-2"></i>
+                        Pilih Mood Dulu
+                    </a>
+                    @endif
+                </div>
+            </div>
+            @endif
 
-                        <!-- Weekly Meal Plan -->
+            <!-- Weekly Meal Plan -->
             @if($weeklyMealPlan)
             <div class="bg-white/95 rounded-3xl shadow-2xl p-6 mb-8">
                 <div class="flex justify-between items-center mb-6">
@@ -555,17 +588,27 @@
                 </h3>
                 <div class="flex space-x-2">
                     <button 
-                    onclick="exportMealPlan()"
-                    class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-                    title="Export Meal Plan"
+                        onclick="exportMealPlan()"
+                        class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                        title="Export Meal Plan"
                     >
-                    <i class="fas fa-download mr-1"></i>
-                    Export
+                        <i class="fas fa-download mr-1"></i>
+                        Export
+                    </button>
+                    <button 
+                        onclick="showAddFoodModal()"
+                        class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                        title="Tambah Makanan"
+                    >
+                        <i class="fas fa-plus mr-1"></i>
+                        Tambah Makanan
                     </button>
                     <form method="POST" action="{{ route('mood-food-tailwind.meal-plan') }}" class="inline">
                     @csrf
                     <input type="hidden" name="action" value="generate">
+                    @if(isset($selectedMood))
                     <input type="hidden" name="mood" value="{{ $selectedMood->name }}">
+                    @endif
                     <button type="submit" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
                         <i class="fas fa-sync-alt mr-1"></i>
                         Regenerate
@@ -583,41 +626,54 @@
                         @foreach(['sarapan', 'makan_siang', 'makan_malam'] as $mealType)
                         <div class="bg-white p-3 rounded-lg text-xs border hover:shadow-sm transition-all">
                             <div class="flex justify-between items-center">
-                            <div class="font-medium text-gray-600 capitalize mb-1">
-                                {{ str_replace('_', ' ', $mealType) }}
-                            </div>
-                            @if(isset($day['meals'][$mealType]) && $day['meals'][$mealType])
-                                <button 
-                                onclick="showMealDetails('{{ $day['meals'][$mealType]->id ?? '' }}')"
-                                class="text-blue-500 hover:text-blue-700"
-                                title="Lihat Detail"
-                                >
-                                <i class="fas fa-info-circle"></i>
-                                </button>
-                            @endif
-                            </div>
-                            @if(isset($day['meals'][$mealType]) && $day['meals'][$mealType])
-                            <div class="text-gray-800 font-medium">
-                                @if($day['meals'][$mealType]->recipe)
-                                {{ $day['meals'][$mealType]->recipe->name }}
-                                @elseif($day['meals'][$mealType]->food)
-                                {{ $day['meals'][$mealType]->food->name }}
+                                <div class="font-medium text-gray-600 capitalize mb-1">
+                                    {{ str_replace('_', ' ', $mealType) }}
+                                </div>
+                                @if(isset($day['meals'][$mealType]) && $day['meals'][$mealType])
+                                    <div class="flex space-x-1">
+                                        <button 
+                                            onclick="showMealDetails('{{ $day['meals'][$mealType]->id ?? '' }}')"
+                                            class="text-blue-500 hover:text-blue-700"
+                                            title="Lihat Detail"
+                                        >
+                                            <i class="fas fa-info-circle"></i>
+                                        </button>
+                                        <button 
+                                            onclick="removeMealFromPlan('{{ $day['meals'][$mealType]->id ?? '' }}', {{ $dayIndex }}, '{{ $mealType }}')"
+                                            class="text-red-500 hover:text-red-700"
+                                            title="Hapus Makanan"
+                                        >
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                 @endif
                             </div>
-                            @if($day['meals'][$mealType]->food && $day['meals'][$mealType]->food->nutritionData)
-                                <div class="text-orange-600 text-xs mt-1">
-                                <i class="fas fa-fire mr-1"></i>
-                                {{ $day['meals'][$mealType]->food->nutritionData->calories_per_100g ?? 0 }} kal
+                            @if(isset($day['meals'][$mealType]) && $day['meals'][$mealType])
+                                <div class="text-gray-800 font-medium">
+                                    @if($day['meals'][$mealType]->recipe)
+                                        {{ $day['meals'][$mealType]->recipe->name }}
+                                    @elseif($day['meals'][$mealType]->food)
+                                        {{ $day['meals'][$mealType]->food->name }}
+                                    @endif
                                 </div>
-                            @endif
+                                @if($day['meals'][$mealType]->food && $day['meals'][$mealType]->food->nutritionData)
+                                    <div class="text-orange-600 text-xs mt-1">
+                                        <i class="fas fa-fire mr-1"></i>
+                                        {{ $day['meals'][$mealType]->food->nutritionData->calories_per_100g ?? 0 }} kal
+                                    </div>
+                                @endif
+                                <div class="text-gray-500 text-xs mt-1">
+                                    <i class="fas fa-utensils mr-1"></i>
+                                    {{ $day['meals'][$mealType]->serving_size ?? 1 }} porsi
+                                </div>
                             @else
-                            <div class="text-gray-400">Belum ada</div>
-                            <button 
-                                onclick="addMealToDay({{ $dayIndex }}, '{{ $mealType }}')"
-                                class="text-green-500 hover:text-green-700 text-xs mt-1"
-                            >
-                                <i class="fas fa-plus mr-1"></i>Tambah
-                            </button>
+                                <div class="text-gray-400 mb-2">Belum ada</div>
+                                <button 
+                                    onclick="showAddFoodModal({{ $dayIndex }}, '{{ $mealType }}')"
+                                    class="w-full bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600 transition-colors"
+                                >
+                                    <i class="fas fa-plus mr-1"></i>Tambah Makanan
+                                </button>
                             @endif
                         </div>
                         @endforeach
@@ -1036,7 +1092,83 @@
     
     <!-- JavaScript Files -->
     <script src="{{ asset('js/mood-food-main.js') }}"></script>
-    <script src="{{ asset('js/recipe-generator.js') }}"></script><!-- Nutrition Details Modal -->
+    <script src="{{ asset('js/recipe-generator.js') }}"></script>
+
+    <!-- Add Food to Meal Plan Modal -->
+    <div id="addFoodModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4" style="display: none;">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-90vh overflow-y-auto">
+            <div class="p-6">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-plus-circle text-green-500 mr-2"></i>
+                        Tambah Makanan ke Meal Plan
+                    </h3>
+                    <button onclick="closeAddFoodModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Selected Meal Info -->
+                <div id="selectedMealInfo" class="bg-blue-50 p-4 rounded-lg mb-6">
+                    <div class="text-sm text-blue-600">Menambahkan ke:</div>
+                    <div class="font-semibold text-blue-800">
+                        <span id="selectedDay">-</span> - <span id="selectedMealType">-</span>
+                    </div>
+                </div>
+
+                <!-- Search Foods -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Cari Makanan:</label>
+                    <div class="relative">
+                        <input type="text" id="foodSearchInput" placeholder="Ketik nama makanan..." 
+                               class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                               oninput="debouncedSearchFoods()">
+                        <button type="button" id="clearSearchBtn" onclick="clearFoodSearch()" 
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Food List -->
+                <div class="mb-6">
+                    <div class="text-sm font-medium text-gray-700 mb-3">Pilih Makanan:</div>
+                    <div id="foodList" class="max-h-60 overflow-y-auto space-y-2">
+                        <!-- Foods will be loaded here via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Serving Size -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Ukuran Porsi:</label>
+                    <select id="servingSize" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <option value="0.5">0.5 porsi</option>
+                        <option value="1" selected>1 porsi</option>
+                        <option value="1.5">1.5 porsi</option>
+                        <option value="2">2 porsi</option>
+                        <option value="2.5">2.5 porsi</option>
+                        <option value="3">3 porsi</option>
+                    </select>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end space-x-3">
+                    <button onclick="closeAddFoodModal()" 
+                            class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                        Batal
+                    </button>
+                    <button onclick="addFoodToMealPlan()" 
+                            class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>
+                        Tambah ke Meal Plan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nutrition Details Modal -->
     <div id="nutritionModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4" style="display: none;">
         <div class="bg-white rounded-2xl max-w-md w-full max-h-90vh overflow-y-auto">
             <div class="p-6">

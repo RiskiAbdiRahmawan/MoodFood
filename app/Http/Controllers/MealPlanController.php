@@ -210,28 +210,28 @@ class MealPlanController extends Controller
     }
 
     /**
-     * Remove an item from a meal plan
+     * Remove an item from a meal plan by item ID only
      */
-    public function removeItem($planId, $itemId)
+    public function removeItem($itemId)
     {
-        $mealPlan = MealPlan::find($planId);
-        
-        if (!$mealPlan) {
-            return response()->json(['error' => 'Meal plan not found'], 404);
-        }
-
-        $item = MealPlanItem::where('meal_plan_id', $planId)->where('id', $itemId)->first();
+        $item = MealPlanItem::find($itemId);
         
         if (!$item) {
             return response()->json(['error' => 'Meal plan item not found'], 404);
         }
 
+        $mealPlan = $item->mealPlan;
         $item->delete();
         
         // Update meal plan total calories
-        $mealPlan->updateTotalCalories();
+        if ($mealPlan) {
+            $mealPlan->updateTotalCalories();
+        }
 
-        return response()->json(['message' => 'Meal plan item removed successfully']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Meal plan item removed successfully'
+        ]);
     }
 
     /**
@@ -760,5 +760,59 @@ class MealPlanController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Search foods from the database
+     */
+    public function searchFoods(Request $request)
+    {
+        $query = $request->input('query', '');
+        $mood = $request->input('mood', '');
+        $limit = $request->input('limit', 20);
+
+        $foodsQuery = \App\Models\FoodModel::with(['category', 'nutritionData']);
+
+        // Filter by search query if provided
+        if (!empty($query)) {
+            $foodsQuery->where('name', 'LIKE', '%' . $query . '%');
+        }
+
+        // If mood is provided, prioritize foods that are good for that mood
+        if (!empty($mood)) {
+            // Get mood-related recommendations first
+            $moodModel = \App\Models\MoodModel::where('name', $mood)->first();
+            if ($moodModel) {
+                $recommendedFoodIds = $moodModel->recommendations()
+                    ->pluck('food_id')
+                    ->toArray();
+                
+                if (!empty($recommendedFoodIds)) {
+                    $foodsQuery->orderByRaw('FIELD(id, ' . implode(',', $recommendedFoodIds) . ') DESC');
+                }
+            }
+        }
+
+        $foods = $foodsQuery->limit($limit)->get();
+
+        $formattedFoods = $foods->map(function ($food) {
+            return [
+                'id' => $food->id,
+                'name' => $food->name,
+                'category' => $food->category->name ?? 'Umum',
+                'calories' => $food->nutritionData->calories_per_100g ?? 0,
+                'protein' => $food->nutritionData->protein_g ?? 0,
+                'carbs' => $food->nutritionData->carbohydrates_g ?? 0,
+                'fats' => $food->nutritionData->fat_g ?? 0,
+                'fiber' => $food->nutritionData->fiber_g ?? 0,
+                'description' => $food->description ?? ''
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'foods' => $formattedFoods,
+            'total' => $formattedFoods->count()
+        ]);
     }
 }

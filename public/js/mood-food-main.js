@@ -1,3 +1,46 @@
+// Utility function for debouncing
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Clear food search input and reload foods
+function clearFoodSearch() {
+    const searchInput = document.getElementById('foodSearchInput');
+    const clearBtn = document.getElementById('clearSearchBtn');
+    
+    searchInput.value = '';
+    clearBtn.classList.add('hidden');
+    
+    // Reload all foods
+    loadFoodsForModal();
+}
+
+// Update visibility of the clear button based on search input
+function updateClearButtonVisibility() {
+    const searchInput = document.getElementById('foodSearchInput');
+    const clearBtn = document.getElementById('clearSearchBtn');
+    
+    if (searchInput.value.trim()) {
+        clearBtn.classList.remove('hidden');
+    } else {
+        clearBtn.classList.add('hidden');
+    }
+}
+
+// Create debounced search function with clear button visibility update
+const debouncedSearchFoods = debounce(function() {
+    updateClearButtonVisibility();
+    searchFoods();
+}, 300);
+
 // Dietary preferences reset function
 function resetDietaryPreference() {
     const dietaryRadios = document.querySelectorAll('input[name="dietary_preference"]');
@@ -411,13 +454,393 @@ function trackFoodInteraction(foodName, interactionType) {
 function showMealDetails(mealId) {
     if (!mealId) return;
     
-    // This could be expanded to show a modal with detailed nutrition info
     alert('Fitur detail makanan akan segera hadir!');
 }
 
 function addMealToDay(dayIndex, mealType) {
-    // This could open a modal to select food for the specific day/meal
-    alert(`Tambah makanan untuk ${mealType.replace('_', ' ')} pada hari ke-${dayIndex + 1}`);
+    showAddFoodModal(dayIndex, mealType);
+}
+
+// Add Food Modal Functions
+let selectedDayIndex = null;
+let selectedMealType = null;
+let selectedFoodId = null;
+
+function showAddFoodModal(dayIndex = null, mealType = null) {
+    selectedDayIndex = dayIndex;
+    selectedMealType = mealType;
+    
+    const modal = document.getElementById('addFoodModal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    
+    // Update selected meal info
+    if (dayIndex !== null && mealType !== null) {
+        const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+        document.getElementById('selectedDay').textContent = days[dayIndex] || 'Hari tidak diketahui';
+        document.getElementById('selectedMealType').textContent = mealType.replace('_', ' ').toUpperCase();
+        document.getElementById('selectedMealInfo').style.display = 'block';
+    } else {
+        document.getElementById('selectedMealInfo').style.display = 'none';
+    }
+    
+    // Load foods
+    loadFoodsForModal();
+}
+
+function closeAddFoodModal() {
+    const modal = document.getElementById('addFoodModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    
+    // Reset selections
+    selectedDayIndex = null;
+    selectedMealType = null;
+    selectedFoodId = null;
+    
+    // Clear search
+    document.getElementById('foodSearchInput').value = '';
+    document.getElementById('foodList').innerHTML = '';
+}
+
+async function loadFoodsForModal() {
+    const foodListElement = document.getElementById('foodList');
+    
+    // Show enhanced loading indicator
+    addLoadingIndicator(foodListElement, 'Memuat makanan...');
+    
+    try {
+        // Get available foods based on current mood if available
+        const mood = window.moodFoodData?.selectedMood || '';
+        
+        // Fetch foods from API
+        const url = new URL('/api/foods/search', window.location.origin);
+        if (mood) {
+            url.searchParams.append('mood', mood);
+        }
+        url.searchParams.append('limit', '20');
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            displayFoods(data.foods);
+        } else {
+            throw new Error(data.message || 'Failed to load foods');
+        }
+    } catch (error) {
+        const errorMessage = handleApiError(error, 'Gagal memuat makanan');
+        foodListElement.innerHTML = `
+            <div class="text-center py-4 text-red-500">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                ${errorMessage}
+                <button onclick="loadFoodsForModal()" class="block mx-auto mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                    Coba Lagi
+                </button>
+            </div>
+        `;
+    }
+}
+
+function displayFoods(foods) {
+    const foodList = document.getElementById('foodList');
+    
+    if (foods.length === 0) {
+        foodList.innerHTML = '<div class="text-center py-4 text-gray-500">Tidak ada makanan ditemukan</div>';
+        return;
+    }
+    
+    const foodsHtml = foods.map(food => `
+        <div class="food-item p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-all duration-200 transform hover:scale-105 ${selectedFoodId === food.id ? 'border-green-500 bg-green-50 ring-2 ring-green-200' : 'border-gray-200'}" 
+             onclick="selectFoodEnhanced(${food.id}, '${food.name.replace(/'/g, "\\'")}')">
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <div class="font-medium text-gray-800">${food.name}</div>
+                    <div class="text-sm text-gray-600 capitalize">${food.category}</div>
+                    ${food.description ? `<div class="text-xs text-gray-500 mt-1">${food.description}</div>` : ''}
+                </div>
+                <div class="text-right ml-3">
+                    <div class="text-sm font-medium text-orange-600">${food.calories} kal</div>
+                    <div class="text-xs text-gray-500">per 100g</div>
+                </div>
+            </div>
+            <div class="mt-2 grid grid-cols-3 gap-2 text-xs text-gray-600">
+                <div class="text-center">
+                    <div class="font-medium text-blue-600">${food.protein}g</div>
+                    <div>Protein</div>
+                </div>
+                <div class="text-center">
+                    <div class="font-medium text-green-600">${food.carbs}g</div>
+                    <div>Karbo</div>
+                </div>
+                <div class="text-center">
+                    <div class="font-medium text-yellow-600">${food.fats}g</div>
+                    <div>Lemak</div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    foodList.innerHTML = foodsHtml;
+}
+
+function selectFood(foodId, foodName) {
+    selectedFoodId = foodId;
+    
+    // Update visual selection
+    document.querySelectorAll('.food-item').forEach(item => {
+        item.classList.remove('border-green-500', 'bg-green-50');
+        item.classList.add('border-gray-200');
+    });
+    
+    event.currentTarget.classList.add('border-green-500', 'bg-green-50');
+    event.currentTarget.classList.remove('border-gray-200');
+}
+
+// Enhanced food selection with better visual feedback
+function selectFoodEnhanced(foodId, foodName) {
+    selectedFoodId = foodId;
+    
+    // Update visual selection with smooth animation
+    document.querySelectorAll('.food-item').forEach(item => {
+        item.classList.remove('border-green-500', 'bg-green-50', 'ring-2', 'ring-green-200');
+        item.classList.add('border-gray-200');
+        item.style.transform = 'scale(1)';
+    });
+    
+    const selectedItem = event.currentTarget;
+    selectedItem.classList.add('border-green-500', 'bg-green-50', 'ring-2', 'ring-green-200');
+    selectedItem.classList.remove('border-gray-200');
+    
+    // Add selection animation
+    selectedItem.style.transform = 'scale(1.02)';
+    setTimeout(() => {
+        selectedItem.style.transform = 'scale(1)';
+    }, 150);
+    
+    // Show selected food info in a more prominent way
+    showSelectedFoodInfo(foodName);
+}
+
+// Show selected food information
+function showSelectedFoodInfo(foodName) {
+    let infoDiv = document.getElementById('selectedFoodInfo');
+    if (!infoDiv) {
+        infoDiv = document.createElement('div');
+        infoDiv.id = 'selectedFoodInfo';
+        infoDiv.className = 'mt-4 p-3 bg-green-50 border border-green-200 rounded-lg';
+        
+        // Insert after food list
+        const foodList = document.getElementById('foodList');
+        foodList.parentNode.insertBefore(infoDiv, foodList.nextSibling);
+    }
+    
+    infoDiv.innerHTML = `
+        <div class="flex items-center text-green-700">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span class="font-medium">Dipilih: ${foodName}</span>
+        </div>
+    `;
+    
+    // Animate the info div
+    infoDiv.style.opacity = '0';
+    infoDiv.style.display = 'block';
+    setTimeout(() => {
+        infoDiv.style.opacity = '1';
+        infoDiv.style.transition = 'opacity 0.3s ease-in-out';
+    }, 50);
+}
+
+async function searchFoods() {
+    const searchTerm = document.getElementById('foodSearchInput').value.trim();
+    const foodListElement = document.getElementById('foodList');
+    
+    // Show enhanced loading while searching
+    addLoadingIndicator(foodListElement, 'Mencari makanan...');
+    
+    try {
+        // Get current mood for better recommendations
+        const mood = window.moodFoodData?.selectedMood || '';
+        
+        // Build API URL
+        const url = new URL('/api/foods/search', window.location.origin);
+        if (searchTerm) {
+            url.searchParams.append('query', searchTerm);
+        }
+        if (mood) {
+            url.searchParams.append('mood', mood);
+        }
+        url.searchParams.append('limit', '20');
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            displayFoods(data.foods);
+        } else {
+            throw new Error(data.message || 'Failed to search foods');
+        }
+    } catch (error) {
+        const errorMessage = handleApiError(error, 'Gagal mencari makanan');
+        foodListElement.innerHTML = `
+            <div class="text-center py-4 text-red-500">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                ${errorMessage}
+                <button onclick="searchFoods()" class="block mx-auto mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                    Coba Lagi
+                </button>
+            </div>
+        `;
+    }
+}
+
+function addFoodToMealPlan() {
+    if (!selectedFoodId) {
+        alert('Silakan pilih makanan terlebih dahulu');
+        return;
+    }
+    
+    if (selectedDayIndex === null || !selectedMealType) {
+        alert('Informasi hari dan waktu makan tidak valid');
+        return;
+    }
+    
+    const servingSize = document.getElementById('servingSize').value;
+    const sessionId = window.moodFoodData?.sessionId || '';
+    
+    if (!sessionId) {
+        alert('Session tidak valid. Silakan refresh halaman.');
+        return;
+    }
+    
+    // Show loading state
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menambahkan...';
+    button.disabled = true;
+    
+    // Use the API endpoint for adding food to meal plan
+    fetch('/api/meal-plans/add-food', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            session_id: sessionId,
+            food_id: selectedFoodId,
+            meal_type: selectedMealType,
+            day_of_week: selectedDayIndex,
+            serving_size: parseFloat(servingSize)
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            showSuccessMessage('Makanan berhasil ditambahkan ke meal plan!');
+            
+            closeAddFoodModal();
+            location.reload(); // Refresh to show updated meal plan
+        } else {
+            alert('Gagal menambahkan makanan: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat menambahkan makanan');
+    })
+    .finally(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+// Add loading indicator styles and animations
+function addLoadingIndicator(targetElement, message = 'Memuat...') {
+    const loadingHtml = `
+        <div class="loading-indicator text-center py-8">
+            <div class="inline-flex items-center justify-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mr-3"></div>
+                <span class="text-gray-600 font-medium">${message}</span>
+            </div>
+        </div>
+    `;
+    targetElement.innerHTML = loadingHtml;
+}
+
+// Add success feedback with animation
+function showSuccessMessage(message, duration = 3000) {
+    const successDiv = document.createElement('div');
+    successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+    successDiv.innerHTML = `
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(successDiv);
+    
+    // Animate in
+    setTimeout(() => {
+        successDiv.classList.remove('translate-x-full');
+        successDiv.classList.add('translate-x-0');
+    }, 100);
+    
+    // Animate out and remove
+    setTimeout(() => {
+        successDiv.classList.remove('translate-x-0');
+        successDiv.classList.add('translate-x-full');
+        setTimeout(() => {
+            document.body.removeChild(successDiv);
+        }, 300);
+    }, duration);
+}
+
+// Remove meal from plan
+function removeMealFromPlan(mealId, dayIndex, mealType) {
+    if (!mealId) return;
+    
+    if (confirm('Apakah Anda yakin ingin menghapus makanan ini dari meal plan?')) {
+        const sessionId = window.moodFoodData?.sessionId || '';
+        
+        // Use the API endpoint for removing meal plan items
+        fetch(`/api/meal-plans/remove-item/${mealId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message || data.success) {
+                // Show success message
+                showSuccessMessage('Makanan berhasil dihapus dari meal plan!');
+                
+                location.reload(); // Refresh to show updated meal plan
+            } else {
+                alert('Gagal menghapus makanan: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menghapus makanan');
+        });
+    }
 }
 
 // Rating system
@@ -474,6 +897,62 @@ function initializeNutritionModal() {
             closeNutritionModal();
         }
     });
+}
+
+// Initialize meal plan functionality on page load
+function initializeMealPlan() {
+    // Check if we're on the meal plan section
+    const mealPlanSection = document.getElementById('meal-plan-section');
+    if (!mealPlanSection) return;
+    
+    // Add event listeners for meal plan buttons
+    const addButtons = document.querySelectorAll('[onclick*="addMealToDay"]');
+    addButtons.forEach(button => {
+        // Track click events for analytics
+        button.addEventListener('click', function() {
+            const foodName = this.getAttribute('data-food-name') || 'Unknown';
+            trackFoodInteraction(foodName, 'add_to_plan');
+        });
+    });
+    
+    // Initialize search input event listeners
+    const searchInput = document.getElementById('foodSearchInput');
+    if (searchInput) {
+        // Add focus event to load foods if not already loaded
+        searchInput.addEventListener('focus', function() {
+            const foodList = document.getElementById('foodList');
+            if (!foodList.hasChildNodes() || foodList.innerHTML.trim() === '') {
+                loadFoodsForModal();
+            }
+        });
+        
+        // Add enter key support for search
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchFoods();
+            }
+        });
+    }
+}
+
+// Enhanced error handling for API calls
+function handleApiError(error, fallbackMessage = 'Terjadi kesalahan yang tidak diketahui') {
+    console.error('API Error:', error);
+    
+    let userMessage = fallbackMessage;
+    
+    if (error.message) {
+        if (error.message.includes('Failed to fetch')) {
+            userMessage = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
+        } else if (error.message.includes('404')) {
+            userMessage = 'Layanan tidak ditemukan. Silakan refresh halaman.';
+        } else if (error.message.includes('500')) {
+            userMessage = 'Terjadi kesalahan server. Silakan coba lagi nanti.';
+        }
+    }
+    
+    return userMessage;
 }
 
 // Initialize on page load
@@ -590,6 +1069,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize nutrition modal
     initializeNutritionModal();
+    
+    // Initialize meal plan functionality
+    initializeMealPlan();
     
     // Animate cards on scroll
     const cards = document.querySelectorAll('.bg-white\\/95');
