@@ -864,14 +864,14 @@ function showRecipeSection(mood) {
                             <div class="bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl p-8 max-w-2xl mx-auto">
                                 <i class="fas fa-utensils text-4xl text-green-600 mb-4"></i>
                                 <h3 class="text-2xl font-bold text-gray-800 mb-4">Resep untuk Mood ${mood.charAt(0).toUpperCase() + mood.slice(1)}</h3>
-                                <p class="text-gray-600 mb-6">Resep detail dengan informasi nutrisi lengkap sedang dimuat...</p>
+                                <p class="text-gray-600 mb-6">Resep detail dengan informasi Zat Gizi lengkap sedang dimuat...</p>
                                 <div class="space-y-4">
                                     <div class="bg-white rounded-lg p-4">
                                         <h4 class="font-semibold text-gray-800 mb-2">Makanan Rekomendasi:</h4>
                                         <p class="text-gray-600">Daftar makanan yang cocok untuk mood ${mood} Anda telah ditampilkan di atas.</p>
                                     </div>
                                     <div class="bg-white rounded-lg p-4">
-                                        <h4 class="font-semibold text-gray-800 mb-2">Informasi Nutrisi:</h4>
+                                        <h4 class="font-semibold text-gray-800 mb-2">Informasi Zat Gizi:</h4>
                                         <p class="text-gray-600">Setiap makanan dilengkapi dengan informasi kalori, protein, karbohidrat, dan lemak.</p>
                                     </div>
                                 </div>
@@ -971,7 +971,7 @@ function updateMoodSummary(mood) {
         },
         cemas: {
             icon: '😰',
-            text: 'Cemas - Tenangkan diri dengan nutrisi yang menenangkan',
+            text: 'Cemas - Tenangkan diri dengan Zat Gizi yang menenangkan',
             color: 'text-orange-500'
         },
         lelah: {
@@ -1140,7 +1140,7 @@ function renderRecommendations(recommendations) {
         gridElement.innerHTML += `
             <div class="col-span-full flex justify-center mt-8 w-full">
                 <button onclick="scrollToRecipeSection()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-full font-semibold hover:from-purple-700 hover:to-indigo-700 transition duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                    <i class="fas fa-utensils mr-3"></i>Lihat Resep Detail dengan Nutrisi Lengkap
+                    <i class="fas fa-utensils mr-3"></i>Lihat Resep Detail dengan Zat Gizi Lengkap
                     <i class="fas fa-arrow-down ml-3"></i>
                 </button>
             </div>
@@ -1280,7 +1280,7 @@ function showFoodDetail(foodId) {
                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4 max-w-lg mx-auto">
                         <p class="text-blue-700 text-sm">
                             <i class="fas fa-star text-blue-600 mr-2"></i>
-                            Resep lengkap dengan informasi nutrisi detail
+                            Resep lengkap dengan informasi Zat Gizi detail
                         </p>
                     </div>
                 </div>
@@ -1298,7 +1298,7 @@ function showFoodDetail(foodId) {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div class="food-details-nutrition">
                     <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-chart-bar text-green-600 mr-2"></i>Informasi Nutrisi Detail
+                        <i class="fas fa-chart-bar text-green-600 mr-2"></i>Informasi Zat Gizi Detail
                     </h3>
                     <div class="nutrition-grid" style="display: grid !important; visibility: visible !important; opacity: 1 !important;">
                         <div class="nutrition-item">
@@ -1392,7 +1392,7 @@ function showFoodDetail(foodId) {
                     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4 max-w-lg mx-auto">
                         <p class="text-yellow-700 text-sm">
                             <i class="fas fa-info-circle text-yellow-600 mr-2"></i>
-                            Menampilkan informasi nutrisi dasar
+                            Menampilkan informasi Zat Gizi dasar
                         </p>
                     </div>
                 </div>
@@ -1410,7 +1410,7 @@ function showFoodDetail(foodId) {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div class="food-details-nutrition">
                     <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-chart-bar text-green-600 mr-2"></i>Informasi Nutrisi
+                        <i class="fas fa-chart-bar text-green-600 mr-2"></i>Informasi Zat Gizi
                     </h3>
                     <div class="nutrition-grid" style="display: grid !important; visibility: visible !important; opacity: 1 !important;">
                         <div class="nutrition-item">

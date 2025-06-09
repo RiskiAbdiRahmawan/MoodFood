@@ -32,7 +32,7 @@
                     <span class="text-green-200">Personal</span>
                 </h1>
                 <p class="text-xl text-white max-w-4xl mx-auto mb-8 leading-relaxed opacity-90">
-                    Dapatkan rekomendasi makanan yang disesuaikan dengan mood dan kebutuhan nutrisi kamu. 
+                    Dapatkan rekomendasi makanan yang disesuaikan dengan mood dan kebutuhan Zat Gizi kamu. 
                     Pilih mood kamu saat ini dan temukan makanan yang tepat untuk meningkatkan kesejahteraan.
                 </p>
                   <!-- Quick Mood Selector Cards -->
@@ -176,7 +176,7 @@
                     Rekomendasi & Resep untuk Kamu
                 </h2>
                 <p class="text-base text-gray-600 max-w-2xl mx-auto">
-                    Temukan makanan yang dipersonalisasi berdasarkan mood kamu, lengkap dengan resep detail dan informasi nutrisi.
+                    Temukan makanan yang dipersonalisasi berdasarkan mood kamu, lengkap dengan resep detail dan informasi Zat Gizi.
                 </p>
             </div>
             
@@ -210,7 +210,7 @@
                         <i class="fas fa-utensils text-green-600 mr-2"></i>
                         Resep Detail untuk Mood <span id="current-mood-name" class="text-green-600"></span>
                     </h3>
-                    <p class="text-sm text-gray-600 max-w-2xl mx-auto">Pilih resep favorit kamu dengan informasi nutrisi lengkap</p>
+                    <p class="text-sm text-gray-600 max-w-2xl mx-auto">Pilih resep favorit kamu dengan informasi Zat Gizi lengkap</p>
                     <div class="bg-green-50 border border-green-200 rounded-lg p-3 mt-4 max-w-lg mx-auto">
                         <p class="text-green-700 text-sm">
                             <i class="fas fa-check-circle text-green-600 mr-2"></i>
@@ -248,10 +248,10 @@
             <div class="text-center mb-12 slide-up">
                 <h2 class="text-4xl font-bold text-gray-800 mb-4">
                     <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>
-                    Tips Nutrisi Berdasarkan Mood
+                    Tips Zat Gizi Berdasarkan Mood
                 </h2>
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    Panduan cepat untuk memahami nutrisi yang dibutuhkan sesuai dengan kondisi mood kamu.
+                    Panduan cepat untuk memahami Zat Gizi yang dibutuhkan sesuai dengan kondisi mood kamu.
                 </p>
             </div>
             

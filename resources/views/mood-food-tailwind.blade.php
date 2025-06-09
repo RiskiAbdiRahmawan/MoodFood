@@ -304,7 +304,7 @@
                     <i class="fas fa-fire text-white text-xl"></i>
                     </div>
                     <div>
-                    <h4 class="text-lg font-semibold text-red-800 mb-3">Menenangkan Emosi dengan Nutrisi</h4>
+                    <h4 class="text-lg font-semibold text-red-800 mb-3">Menenangkan Emosi dengan Zat Gizi</h4>
                     <p class="text-red-700 leading-relaxed">
                         Saat mood sedang marah, tubuh dan otak berada dalam kondisi tegang, terstimulasi berlebihan, dan penuh hormon stres seperti <strong>kortisol dan adrenalin</strong>. Untuk menetralkannya, kita cenderung memerlukan makanan yang mengandung <strong>magnesium, vitamin B kompleks, lemak sehat, antioksidan, dan probiotik</strong> serta gula alami.
                     </p>
@@ -343,7 +343,7 @@
                         Saat mood lelah, tubuh dan otak memerlukan makanan yang mengandung <strong>karbohidrat kompleks, vitamin B, zat besi, magnesium, dan protein</strong> untuk mengisi ulang energi, meningkatkan aliran oksigen, dan menstabilkan fungsi otak serta sistem saraf.
                     </p>
                     <p class="text-purple-700 leading-relaxed mt-3">
-                        Nutrisi-nutrisi ini bekerja sama untuk mengembalikan vitalitas tubuh secara bertahap dan berkelanjutan, bukan hanya memberikan dorongan energi sesaat.
+                        Zat Gizi ini bekerja sama untuk mengembalikan vitalitas tubuh secara bertahap dan berkelanjutan, bukan hanya memberikan dorongan energi sesaat.
                     </p>
                     </div>
                 </div>
@@ -360,7 +360,7 @@
                         Saat stres, tubuh membutuhkan makanan yang kaya <strong>magnesium, vitamin B, triptofan, antioksidan, probiotik, dan karbohidrat kompleks</strong>. Makanan tersebut bekerja sama membantu menenangkan sistem saraf, menstabilkan energi otak, serta memperbaiki suasana hati secara bertahap dan alami.
                     </p>
                     <p class="text-orange-700 leading-relaxed mt-3">
-                        Kombinasi nutrisi ini membantu tubuh mengelola hormon stres dengan lebih baik dan menciptakan keseimbangan emosional yang lebih stabil.
+                        Kombinasi Zat Gizi ini membantu tubuh mengelola hormon stres dengan lebih baik dan menciptakan keseimbangan emosional yang lebih stabil.
                     </p>
                     </div>
                 </div>
@@ -390,9 +390,9 @@
                     <i class="fas fa-info-circle text-white text-xl"></i>
                     </div>
                     <div>
-                    <h4 class="text-lg font-semibold text-gray-800 mb-3">Hubungan Mood dan Nutrisi</h4>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-3">Hubungan Mood dan Zat Gizi</h4>
                     <p class="text-gray-700 leading-relaxed">
-                        Setiap mood memiliki kebutuhan nutrisi yang spesifik. Makanan yang tepat dapat membantu menyeimbangkan neurotransmitter di otak dan mendukung kesehatan mental secara keseluruhan.
+                        Setiap mood memiliki kebutuhan Zat Gizi yang spesifik. Makanan yang tepat dapat membantu menyeimbangkan neurotransmitter di otak dan mendukung kesehatan mental secara keseluruhan.
                     </p>
                     <p class="text-gray-700 leading-relaxed mt-3">
                         Dengan memilih makanan yang sesuai dengan kondisi emosional, kita dapat membantu tubuh mencapai keseimbangan yang optimal.
@@ -430,7 +430,7 @@
                     <button 
                     onclick="showNutritionModal('{{ $food->id }}', '{{ addslashes($food->name) }}', {{ $food->calories_per_100g ?? 0 }}, {{ $food->protein_per_100g ?? 0 }}, {{ $food->fats_per_100g ?? 0 }}, {{ $food->carbs_per_100g ?? 0 }})"
                     class="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors"
-                    title="Lihat Detail Nutrisi"
+                    title="Lihat Detail Zat Gizi"
                     >
                     <i class="fas fa-info-circle text-xs"></i>
                     </button>
@@ -480,7 +480,7 @@
                     <button 
                     onclick="showNutritionModal('{{ $food->id }}', '{{ addslashes($food->name) }}', {{ $food->calories_per_100g ?? 0 }}, {{ $food->protein_per_100g ?? 0 }}, {{ $food->fats_per_100g ?? 0 }}, {{ $food->carbs_per_100g ?? 0 }})"
                     class="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors"
-                    title="Lihat Detail Nutrisi"
+                    title="Lihat Detail Zat Gizi"
                     >
                     <i class="fas fa-info-circle text-xs"></i>
                     </button>
@@ -800,7 +800,7 @@
             
             <div class="bg-white rounded-lg p-4 mb-4">
                 <h5 class="font-semibold text-gray-700 mb-2">
-                <i class="fas fa-chart-pie text-orange-500 mr-2"></i>Nutrisi per Sajian:
+                <i class="fas fa-chart-pie text-orange-500 mr-2"></i>Zat Gizi per Sajian:
                 </h5>
                 <div class="grid grid-cols-3 gap-2">
                 <div class="bg-blue-50 p-2 rounded-lg text-center">
@@ -987,7 +987,7 @@
                 <div class="bg-white/95 rounded-3xl shadow-2xl p-6">
                     <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-chart-bar text-orange-500 mr-2"></i>
-                        Insight Nutrisi
+                        Insight Zat Gizi
                     </h3>
                     <div class="space-y-4">
                         @if(isset($analytics) && isset($analytics['activity_summary']['total_interactions']) && $analytics['activity_summary']['total_interactions'] > 0)
@@ -1019,7 +1019,7 @@
                         @else
                             <div class="text-center py-8 text-gray-500">
                                 <i class="fas fa-chart-bar text-3xl mb-3 opacity-50"></i>
-                                <p class="text-sm">Belum ada data nutrisi untuk dianalisis</p>
+                                <p class="text-sm">Belum ada data Zat Gizi untuk dianalisis</p>
                                 <p class="text-xs mt-1">Mulai memilih makanan untuk melihat insight</p>
                             </div>
                         @endif
@@ -1176,7 +1176,7 @@
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-bold text-gray-800 flex items-center">
                         <i class="fas fa-chart-pie text-orange-500 mr-2"></i>
-                        Detail Nutrisi
+                        Detail Zat Gizi
                     </h3>
                     <button onclick="closeNutritionModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
                         <i class="fas fa-times text-xl"></i>
