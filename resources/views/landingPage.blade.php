@@ -165,7 +165,7 @@
                 Keunggulan Sistem <span class="text-gradient">MoodFood</span>
             </h2>
             <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-                Teknologi canggih yang memahami emosi dan memberikan solusi nutrisi terpersonalisasi
+                Teknologi canggih yang memahami emosi dan memberikan solusi Zat Gizi terpersonalisasi
             </p>
         </div>
         
@@ -266,7 +266,7 @@
                         </div>
                         <div>
                             <h4 class="text-lg font-semibold text-gray-800 mb-2">Makanan Olahan Sehat</h4>
-                            <p class="text-gray-600">Contoh resep makanan olahan seperti smoothie nutrisi, salad segar, atau sup hangat yang mudah dibuat di rumah.</p>
+                            <p class="text-gray-600">Contoh resep makanan olahan seperti smoothie Zat Gizi, salad segar, atau sup hangat yang mudah dibuat di rumah.</p>
                         </div>
                     </div>
                     
@@ -320,7 +320,7 @@
                             </div>
                             <div>
                                 <h4 class="text-lg font-semibold text-gray-800 mb-2">Mengapa makanan bisa memengaruhi mood?</h4>
-                                <p class="text-gray-600">Makanan mengandung nutrisi yang dapat mempengaruhi produksi neurotransmitter di otak, yang berperan dalam regulasi suasana hati.</p>
+                                <p class="text-gray-600">Makanan mengandung Zat Gizi yang dapat mempengaruhi produksi neurotransmitter di otak, yang berperan dalam regulasi suasana hati.</p>
                             </div>
                         </div>
                     </div>
@@ -348,7 +348,7 @@
                             </div>
                             <div>
                                 <h4 class="text-lg font-semibold text-gray-800 mb-2">Tabel Interaktif: Mood → Zat Gizi → Makanan</h4>
-                                <p class="text-gray-600">Sistem kami menyediakan panduan lengkap yang menghubungkan suasana hati dengan nutrisi yang dibutuhkan dan makanan yang mendukung.</p>
+                                <p class="text-gray-600">Sistem kami menyediakan panduan lengkap yang menghubungkan suasana hati dengan Zat Gizi yang dibutuhkan dan makanan yang mendukung.</p>
                             </div>
                         </div>
                     </div>
