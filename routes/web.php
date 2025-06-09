@@ -49,7 +49,7 @@ Route::post('/mood-food-tailwind/generate-recipe', [App\Http\Controllers\MoodFoo
 Route::post('/mood-food-tailwind/save-recipe', [App\Http\Controllers\MoodFoodTailwindController::class, 'saveRecipe'])->name('mood-food-tailwind.save-recipe');
 
 // Analytics Routes
-Route::get('/mood-food-tailwind/analytics', [App\Http\Controllers\MoodFoodTailwindController::class, 'getAnalytics'])->name('mood-food-tailwind.analytics');
+Route::match(['GET', 'POST'], '/mood-food-tailwind/analytics', [App\Http\Controllers\MoodFoodTailwindController::class, 'getAnalytics'])->name('mood-food-tailwind.analytics');
 Route::get('/mood-food-tailwind/analytics/export', [App\Http\Controllers\MoodFoodTailwindController::class, 'exportAnalytics'])->name('mood-food-tailwind.analytics.export');
 
 // API Routes for AJAX functionality

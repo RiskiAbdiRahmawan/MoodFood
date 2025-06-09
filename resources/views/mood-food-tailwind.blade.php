@@ -798,27 +798,36 @@
 
 
             <!-- Analytics Dashboard -->
-            @if(isset($analytics))
+            @if(isset($analytics) && isset($sessionInfo))
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Stats Cards -->
                 <div class="bg-white/95 rounded-xl p-6 text-center">
-                <div class="text-3xl font-bold text-mood-primary mb-2">{{ $sessionInfo['total_visits'] }}</div>
+                <div class="text-3xl font-bold text-mood-primary mb-2">{{ $sessionInfo['total_visits'] ?? 0 }}</div>
                 <div class="text-sm text-gray-600">Total Kunjungan</div>
                 </div>
                 
                 <div class="bg-white/95 rounded-xl p-6 text-center">
-                <div class="text-3xl font-bold text-green-500 mb-2">{{ $sessionInfo['meal_plans_count'] }}</div>
+                <div class="text-3xl font-bold text-green-500 mb-2">{{ $sessionInfo['meal_plans_count'] ?? 0 }}</div>
                 <div class="text-sm text-gray-600">Meal Plans Aktif</div>
                 </div>
                 
                 <div class="bg-white/95 rounded-xl p-6 text-center">
-                <div class="text-3xl font-bold text-orange-500 mb-2">{{ $analytics['activity_summary']['total_interactions'] }}</div>
+                <div class="text-3xl font-bold text-orange-500 mb-2">{{ $analytics['activity_summary']['total_interactions'] ?? 0 }}</div>
                 <div class="text-sm text-gray-600">Interaksi Total</div>
                 </div>
                 
                 <div class="bg-white/95 rounded-xl p-6 text-center">
-                <div class="text-3xl font-bold text-purple-500 mb-2">{{ $analytics['activity_summary']['unique_foods'] }}</div>
+                <div class="text-3xl font-bold text-purple-500 mb-2">{{ $analytics['activity_summary']['unique_foods'] ?? 0 }}</div>
                 <div class="text-sm text-gray-600">Makanan Unik</div>
+                </div>
+            </div>
+            @else
+            <div class="bg-white/95 rounded-xl p-6 text-center mb-8">
+                <div class="text-gray-500">
+                    <i class="fas fa-chart-line text-4xl mb-4 opacity-50"></i>
+                    <p>Mulai gunakan aplikasi untuk melihat analitik personal Anda</p>
+                    <p class="text-sm mt-2">Pilih mood dan mulai berinteraksi dengan rekomendasi makanan</p>
+                </div>
             </div>
             @endif
 
@@ -855,26 +864,59 @@
                         Pola Mood
                     </h3>
                     <div class="space-y-4">
-                        @php 
-                        $moodPatterns = [
-                            ['mood' => 'Bahagia', 'percentage' => 35, 'color' => 'yellow'],
-                            ['mood' => 'Tenang', 'percentage' => 25, 'color' => 'blue'],
-                            ['mood' => 'Energik', 'percentage' => 20, 'color' => 'green'],
-                            ['mood' => 'Stress', 'percentage' => 12, 'color' => 'red'],
-                            ['mood' => 'Sedih', 'percentage' => 8, 'color' => 'gray']
-                        ]
-                        @endphp
-                        @foreach($moodPatterns as $pattern)
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-700">{{ $pattern['mood'] }}</span>
-                                <div class="flex items-center">
-                                    <div class="w-20 bg-gray-200 rounded-full h-2 mr-2">
-                                        <div class="bg-{{ $pattern['color'] }}-500 h-2 rounded-full" style="width: {{ $pattern['percentage'] }}%"></div>
+                        @if(isset($analytics) && isset($analytics['activity_summary']['mood_changes']) && $analytics['activity_summary']['mood_changes'] > 0)
+                            @php 
+                            // Use real mood data if available, otherwise show placeholder
+                            $totalMoodTracking = $analytics['activity_summary']['mood_changes'];
+                            // Get mood distribution from food preferences data (as a proxy)
+                            $moodPatterns = [];
+                            
+                            if(isset($analytics['food_preferences'])) {
+                                $topFoods = collect($analytics['food_preferences'])->take(5);
+                                $total = $topFoods->sum();
+                                
+                                if($total > 0) {
+                                    $colors = ['blue', 'green', 'yellow', 'purple', 'red'];
+                                    $colorIndex = 0;
+                                    
+                                    foreach($topFoods as $food => $count) {
+                                        $percentage = round(($count / $total) * 100);
+                                        $moodPatterns[] = [
+                                            'mood' => Str::limit($food, 15),
+                                            'percentage' => $percentage,
+                                            'color' => $colors[$colorIndex % count($colors)]
+                                        ];
+                                        $colorIndex++;
+                                    }
+                                }
+                            }
+                            
+                            // Fallback if no patterns found
+                            if(empty($moodPatterns)) {
+                                $moodPatterns = [
+                                    ['mood' => 'Belum ada data', 'percentage' => 100, 'color' => 'gray']
+                                ];
+                            }
+                            @endphp
+                            
+                            @foreach($moodPatterns as $pattern)
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-700">{{ $pattern['mood'] }}</span>
+                                    <div class="flex items-center">
+                                        <div class="w-20 bg-gray-200 rounded-full h-2 mr-2">
+                                            <div class="bg-{{ $pattern['color'] }}-500 h-2 rounded-full" style="width: {{ $pattern['percentage'] }}%"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-600">{{ $pattern['percentage'] }}%</span>
                                     </div>
-                                    <span class="text-xs text-gray-600">{{ $pattern['percentage'] }}%</span>
                                 </div>
+                            @endforeach
+                        @else
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-chart-line text-3xl mb-3 opacity-50"></i>
+                                <p class="text-sm">Belum ada data mood untuk dianalisis</p>
+                                <p class="text-xs mt-1">Mulai pilih mood untuk melihat pola</p>
                             </div>
-                        @endforeach
+                        @endif
                     </div>
                 </div>
 
@@ -885,27 +927,39 @@
                         Insight Nutrisi
                     </h3>
                     <div class="space-y-4">
-                        <div class="p-3 bg-green-50 rounded-lg border border-green-200">
-                            <div class="font-medium text-green-800">Konsumsi Protein</div>
-                            <div class="text-sm text-green-600">85g/hari (Target: 80g)</div>
-                            <div class="text-xs text-green-500 mt-1">
-                                <i class="fas fa-check mr-1"></i>Target tercapai!
+                        @if(isset($analytics) && isset($analytics['activity_summary']['total_interactions']) && $analytics['activity_summary']['total_interactions'] > 0)
+                            <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <div class="font-medium text-blue-800">Interaksi Makanan</div>
+                                <div class="text-sm text-blue-600">{{ $analytics['activity_summary']['total_interactions'] }} interaksi total</div>
+                                <div class="text-xs text-blue-500 mt-1">
+                                    <i class="fas fa-chart-line mr-1"></i>{{ $analytics['activity_summary']['unique_foods'] }} makanan unik dipilih
+                                </div>
                             </div>
-                        </div>
-                        <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                            <div class="font-medium text-blue-800">Hidrasi</div>
-                            <div class="text-sm text-blue-600">2.1L/hari (Target: 2.5L)</div>
-                            <div class="text-xs text-orange-500 mt-1">
-                                <i class="fas fa-exclamation mr-1"></i>Perlu ditingkatkan
+                            
+                            @if(isset($analytics['activity_summary']['mood_changes']) && $analytics['activity_summary']['mood_changes'] > 0)
+                            <div class="p-3 bg-green-50 rounded-lg border border-green-200">
+                                <div class="font-medium text-green-800">Perubahan Mood</div>
+                                <div class="text-sm text-green-600">{{ $analytics['activity_summary']['mood_changes'] }} kali perubahan mood</div>
+                                <div class="text-xs text-green-500 mt-1">
+                                    <i class="fas fa-smile mr-1"></i>Aktif melacak mood
+                                </div>
                             </div>
-                        </div>
-                        <div class="p-3 bg-purple-50 rounded-lg border border-purple-200">
-                            <div class="font-medium text-purple-800">Kalori</div>
-                            <div class="text-sm text-purple-600">1,850 kal/hari</div>
-                            <div class="text-xs text-green-500 mt-1">
-                                <i class="fas fa-balance-scale mr-1"></i>Seimbang
+                            @endif
+                            
+                            <div class="p-3 bg-purple-50 rounded-lg border border-purple-200">
+                                <div class="font-medium text-purple-800">Status Aktivitas</div>
+                                <div class="text-sm text-purple-600">{{ $sessionInfo['total_visits'] ?? 1 }} sesi penggunaan</div>
+                                <div class="text-xs text-purple-500 mt-1">
+                                    <i class="fas fa-user-check mr-1"></i>Pengguna {{ $sessionInfo['is_returning_visitor'] ? 'berulang' : 'baru' }}
+                                </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-chart-bar text-3xl mb-3 opacity-50"></i>
+                                <p class="text-sm">Belum ada data nutrisi untuk dianalisis</p>
+                                <p class="text-xs mt-1">Mulai memilih makanan untuk melihat insight</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -913,21 +967,46 @@
                 <div class="bg-white/95 rounded-3xl shadow-2xl p-6">
                     <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
-                        Rekomendasi 
+                        Rekomendasi Personal
                     </h3>
                     <div class="space-y-3">
-                        <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200">
-                            <div class="font-medium text-blue-800 text-sm">Mood Booster</div>
-                            <div class="text-xs text-blue-600 mt-1">Konsumsi lebih banyak omega-3 untuk meningkatkan mood</div>
-                        </div>
-                        <div class="p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
-                            <div class="font-medium text-green-800 text-sm">Pola Makan</div>
-                            <div class="text-xs text-green-600 mt-1">Atur jadwal makan yang lebih konsisten</div>
-                        </div>
-                        <div class="p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200">
-                            <div class="font-medium text-purple-800 text-sm">Aktivitas</div>
-                            <div class="text-xs text-purple-600 mt-1">Tambahkan olahraga ringan untuk keseimbangan</div>
-                        </div>
+                        @if(isset($analytics) && isset($analytics['activity_summary']['total_interactions']) && $analytics['activity_summary']['total_interactions'] > 0)
+                            @if(isset($analytics['food_preferences']) && count($analytics['food_preferences']) > 0)
+                            <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                                <div class="font-medium text-blue-800 text-sm">Makanan Favorit</div>
+                                <div class="text-xs text-blue-600 mt-1">
+                                    Anda sering memilih: {{ collect($analytics['food_preferences'])->keys()->first() }}
+                                </div>
+                            </div>
+                            @endif
+                            
+                            @if($sessionInfo['is_returning_visitor'])
+                            <div class="p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
+                                <div class="font-medium text-green-800 text-sm">Konsistensi Bagus</div>
+                                <div class="text-xs text-green-600 mt-1">Anda sudah {{ $sessionInfo['total_visits'] }} kali menggunakan aplikasi - pertahankan!</div>
+                            </div>
+                            @endif
+                            
+                            <div class="p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                                <div class="font-medium text-purple-800 text-sm">Eksplorasi Mood</div>
+                                <div class="text-xs text-purple-600 mt-1">Coba pilih mood yang berbeda untuk rekomendasi makanan baru</div>
+                            </div>
+                        @else
+                            <div class="p-3 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg border border-yellow-200">
+                                <div class="font-medium text-yellow-800 text-sm">Mulai Sekarang</div>
+                                <div class="text-xs text-yellow-600 mt-1">Pilih mood Anda untuk mendapatkan rekomendasi personal</div>
+                            </div>
+                            
+                            <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                                <div class="font-medium text-blue-800 text-sm">Jelajahi Fitur</div>
+                                <div class="text-xs text-blue-600 mt-1">Coba meal planner dan recipe generator untuk pengalaman lengkap</div>
+                            </div>
+                            
+                            <div class="p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
+                                <div class="font-medium text-green-800 text-sm">Tracking Konsisten</div>
+                                <div class="text-xs text-green-600 mt-1">Gunakan secara rutin untuk analisis yang lebih akurat</div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -941,7 +1020,10 @@
             sessionId: '{{ $sessionId ?? "" }}',
             selectedMood: '{{ $selectedMood->name ?? "" }}',
             mealPlanRoute: '{{ route("mood-food-tailwind.meal-plan") }}',
-            weeklyMealPlan: @json($weeklyMealPlan ?? null)
+            weeklyMealPlan: @json($weeklyMealPlan ?? null),
+            analytics: @json($analytics ?? null),
+            sessionInfo: @json($sessionInfo ?? null),
+            analyticsApiRoute: '{{ route("mood-food-tailwind.analytics") }}'
         };
     </script>
     
