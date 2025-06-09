@@ -20,6 +20,16 @@
     
     <!-- Tailwind Configuration -->
     <script src="{{ asset('js/tailwind-config.js') }}"></script>
+    
+    <!-- Section Management Styles -->
+    <style>
+        .section-content.hidden {
+            display: none !important;
+        }
+        .section-content {
+            display: block;
+        }
+    </style>
 </head>
 <body class="bg-gradient-to-br from-mood-primary to-mood-secondary min-h-screen">    
     <!-- Navigation -->
@@ -137,7 +147,7 @@
     
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Mood Tracker Section -->
-        <div id="mood-tracker-section" class="section-content">
+        <div id="mood-tracker-section" class="section-content hidden">
             <!-- Header Section -->
             <div class="text-center mb-8">
                 <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -831,9 +841,6 @@
             </div>
             @endif
 
-        
-            </div>
-
             <!-- Charts Section -->
             <div class="grid lg:grid-cols-2 gap-8 mb-8">
                 <!-- Mood Trend Chart -->
@@ -1010,9 +1017,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <!-- End Analytics Section -->
     </div>
-    <!-- End Analytics Section -->
-    </div>    
     
     <!-- Data for JavaScript -->
     <script>

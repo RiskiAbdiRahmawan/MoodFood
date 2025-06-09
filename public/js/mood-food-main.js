@@ -8,6 +8,8 @@ function resetDietaryPreference() {
 
 // Navigation and Section Management
 function showSection(sectionName) {
+    console.log('Showing section:', sectionName); // Debug log
+    
     // Hide all sections
     document.querySelectorAll('.section-content').forEach(section => {
         section.classList.add('hidden');
@@ -17,6 +19,9 @@ function showSection(sectionName) {
     const targetSection = document.getElementById(sectionName + '-section');
     if (targetSection) {
         targetSection.classList.remove('hidden');
+        console.log('Section shown:', sectionName); // Debug log
+    } else {
+        console.error('Section not found:', sectionName + '-section');
     }
     
     // Update navigation active states
@@ -472,7 +477,13 @@ function initializeNutritionModal() {
 }
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {    // Set default active section
+document.addEventListener('DOMContentLoaded', function() {
+    // Force initial state - hide all sections first
+    document.querySelectorAll('.section-content').forEach(section => {
+        section.classList.add('hidden');
+    });
+    
+    // Set default active section
     showSection('mood-tracker');
     
     // Initialize nutrition modal
@@ -594,4 +605,24 @@ document.addEventListener('DOMContentLoaded', function() {    // Set default act
     cards.forEach(card => {
         observer.observe(card);
     });
+});
+
+// Backup initialization for page load
+window.addEventListener('load', function() {
+    // Additional safety check - ensure only mood-tracker is visible
+    const allSections = document.querySelectorAll('.section-content');
+    let hasVisibleSection = false;
+    
+    allSections.forEach(section => {
+        if (!section.classList.contains('hidden')) {
+            hasVisibleSection = true;
+        }
+    });
+    
+    // If multiple sections are visible or mood-tracker is not visible, reset
+    const moodSection = document.getElementById('mood-tracker-section');
+    if (!hasVisibleSection || (moodSection && moodSection.classList.contains('hidden'))) {
+        console.log('Backup initialization - fixing section visibility');
+        showSection('mood-tracker');
+    }
 });
