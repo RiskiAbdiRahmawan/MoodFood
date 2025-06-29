@@ -5,23 +5,9 @@ use App\Http\Controllers\MoodFoodController;
 use App\Http\Controllers\FeedbackController;
 use Illuminate\Support\Facades\DB;
 
-// Health check endpoint for Railway
+// Health check route for Railway
 Route::get('/health', function () {
-    try {
-        DB::connection()->getPdo();
-        return response()->json([
-            'status' => 'ok',
-            'database' => 'connected',
-            'timestamp' => now()->toISOString()
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'database' => 'disconnected',
-            'error' => $e->getMessage(),
-            'timestamp' => now()->toISOString()
-        ], 500);
-    }
+    return response('OK', 200);
 });
 
 Route::get('/', function () {
@@ -56,7 +42,5 @@ Route::get('/mood-food-tailwind/analytics/export', [App\Http\Controllers\MoodFoo
 Route::post('/api/track-mood', [App\Http\Controllers\MoodFoodTailwindController::class, 'trackMoodSelectionAPI']);
 Route::post('/api/track-food', [App\Http\Controllers\MoodFoodTailwindController::class, 'trackFoodInteraction']);
 Route::post('/api/feedback', [App\Http\Controllers\MoodFoodTailwindController::class, 'submitFeedback']);
-
-
 
 Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
