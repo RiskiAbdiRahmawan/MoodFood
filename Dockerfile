@@ -44,9 +44,23 @@ RUN chown -R www-data:www-data /var/www/html \
 RUN rm -f /var/www/html/public/storage \
     && ln -s /var/www/html/storage/app/public /var/www/html/public/storage
 
-# Make start script executable
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+# Create startup script
+RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+# Run Laravel setup\n\
+php artisan config:cache\n\
+php artisan route:cache\n\
+php artisan view:cache\n\
+php artisan migrate --force\n\
+php artisan db:seed-safe\n\
+php artisan storage:link --force\n\
+\n\
+# Start PHP-FPM\n\
+php-fpm' > /start.sh && chmod +x /start.sh
 
-# Set entry point
+# Expose port 9000
+EXPOSE 9000
+
+# Start PHP-FPM
 CMD ["/start.sh"]
